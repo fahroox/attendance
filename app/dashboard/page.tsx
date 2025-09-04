@@ -1,6 +1,6 @@
 import { createClient } from "@/lib/supabase/server";
 import { redirect } from "next/navigation";
-import { LogoutButton } from "@/components/logout-button";
+import { DashboardSidebar } from "@/components/dashboard-sidebar";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import Link from "next/link";
@@ -42,17 +42,19 @@ export default async function Dashboard() {
   };
 
   return (
-    <div className="min-h-screen bg-background">
-      <div className="container mx-auto px-4 py-8">
-        <div className="flex justify-between items-center mb-8">
-          <div>
+    <div className="min-h-screen bg-background flex">
+      {/* Sidebar */}
+      <DashboardSidebar user={user} />
+      
+      {/* Main Content */}
+      <div className="flex-1 lg:ml-0">
+        <div className="p-6 lg:p-8">
+          <div className="mb-8">
             <h1 className="text-3xl font-bold">Dashboard</h1>
             <p className="text-muted-foreground">
-              Hello, {user.full_name || user.email} (role: {user.role})
+              Welcome back, {user.full_name || user.email}
             </p>
           </div>
-          <LogoutButton />
-        </div>
 
         <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
           {/* Admin-specific card */}
@@ -196,6 +198,7 @@ export default async function Dashboard() {
               </div>
             </CardContent>
           </Card>
+        </div>
         </div>
       </div>
     </div>
