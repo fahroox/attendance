@@ -1,10 +1,7 @@
-<a href="https://demo-nextjs-with-supabase.vercel.app/">
-  <img alt="Next.js and Supabase Starter Kit - the fastest way to build apps with Next.js and Supabase" src="https://demo-nextjs-with-supabase.vercel.app/opengraph-image.png">
-  <h1 align="center">Next.js and Supabase Starter Kit</h1>
-</a>
+<h1 align="center">Design Studio Attendance System</h1>
 
 <p align="center">
- The fastest way to build apps with Next.js and Supabase
+ Attendance management system for design studio teams with role-based access
 </p>
 
 <p align="center">
@@ -19,19 +16,12 @@
 
 ## Features
 
-- Works across the entire [Next.js](https://nextjs.org) stack
-  - App Router
-  - Pages Router
-  - Middleware
-  - Client
-  - Server
-  - It just works!
-- supabase-ssr. A package to configure Supabase Auth to use cookies
-- Password-based authentication block installed via the [Supabase UI Library](https://supabase.com/ui/docs/nextjs/password-based-auth)
-- Styling with [Tailwind CSS](https://tailwindcss.com)
-- Components with [shadcn/ui](https://ui.shadcn.com/)
-- Optional deployment with [Supabase Vercel Integration and Vercel deploy](#deploy-your-own)
-  - Environment variables automatically assigned to Vercel project
+- **Role-based Authentication**: Admin and Team member roles with different access levels
+- **Secure Login/Signup**: Password-based authentication with email verification
+- **Password Reset**: Forgot password functionality with email reset links
+- **Modern UI**: Built with [Next.js](https://nextjs.org), [Tailwind CSS](https://tailwindcss.com), and [shadcn/ui](https://ui.shadcn.com/)
+- **Database Integration**: Powered by [Supabase](https://supabase.com) for authentication and data storage
+- **Deployment Ready**: Optimized for [Vercel](https://vercel.com) deployment
 
 ## Demo
 
