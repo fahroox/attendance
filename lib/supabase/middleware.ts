@@ -1,6 +1,6 @@
 import { createServerClient } from "@supabase/ssr";
 import { NextResponse, type NextRequest } from "next/server";
-import { hasEnvVars } from "../utils";
+import { hasEnvVars } from "@/lib/utils";
 
 export async function updateSession(request: NextRequest) {
   let supabaseResponse = NextResponse.next({
@@ -46,6 +46,40 @@ export async function updateSession(request: NextRequest) {
   // with the Supabase client, your users may be randomly logged out.
   const { data } = await supabase.auth.getClaims();
   const user = data?.claims;
+
+  // Handle role-based access control
+  const { pathname } = request.nextUrl;
+  
+  // Redirect authenticated users away from auth pages
+  if (user && (pathname === '/auth/login' || pathname === '/auth/sign-up')) {
+    const url = request.nextUrl.clone();
+    url.pathname = '/dashboard';
+    return NextResponse.redirect(url);
+  }
+  
+  // Handle role-based access control for admin routes
+  if (pathname.startsWith('/admin')) {
+    if (user) {
+      // Check user role
+      const { data: profile } = await supabase
+        .from('user_profiles')
+        .select('role')
+        .eq('id', user.sub)
+        .single();
+      
+      if (profile?.role !== 'admin') {
+        // Redirect non-admin users to dashboard
+        const url = request.nextUrl.clone();
+        url.pathname = '/dashboard';
+        return NextResponse.redirect(url);
+      }
+    } else {
+      // No user, redirect to login
+      const url = request.nextUrl.clone();
+      url.pathname = '/auth/login';
+      return NextResponse.redirect(url);
+    }
+  }
 
   if (
     request.nextUrl.pathname !== "/" &&
