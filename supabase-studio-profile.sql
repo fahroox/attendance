@@ -3,7 +3,9 @@ CREATE TABLE IF NOT EXISTS public.studio_profiles (
   id UUID DEFAULT gen_random_uuid() PRIMARY KEY,
   studio_name TEXT NOT NULL,
   studio_tagline TEXT,
-  address TEXT,
+  google_maps_url TEXT,
+  longitude DECIMAL(11, 8),
+  latitude DECIMAL(10, 8),
   created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
   updated_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
 );
@@ -65,9 +67,11 @@ CREATE TRIGGER update_studio_profiles_updated_at
   EXECUTE FUNCTION public.update_updated_at_column();
 
 -- Insert default studio profile (optional)
-INSERT INTO public.studio_profiles (studio_name, studio_tagline, address)
+INSERT INTO public.studio_profiles (studio_name, studio_tagline, google_maps_url, longitude, latitude)
 VALUES (
   'Design Studio',
   'Creating beautiful experiences',
-  '123 Design Street, Creative City, CC 12345'
+  'https://maps.google.com/?q=123+Design+Street,+Creative+City,+CC+12345',
+  40.7128,
+  -74.0060
 ) ON CONFLICT DO NOTHING;
