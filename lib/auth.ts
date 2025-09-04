@@ -1,5 +1,5 @@
 import { createClient } from "@/lib/supabase/server";
-import { UserProfile, AuthUser } from "@/lib/types";
+import { AuthUser } from "@/lib/types";
 
 export async function getUserProfile(): Promise<AuthUser | null> {
   const supabase = await createClient();

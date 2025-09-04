@@ -135,7 +135,7 @@ export function formatCoordinates(coordinates: Coordinates): string | null {
   }
 
   const { latitude, longitude } = coordinates;
-  return `${latitude.toFixed(6)}, ${longitude.toFixed(6)}`;
+  return `${latitude!.toFixed(6)}, ${longitude!.toFixed(6)}`;
 }
 
 /**

@@ -7,11 +7,9 @@ import Link from "next/link";
 import { createClient } from "@/lib/supabase/server";
 
 export default async function AdminPage() {
-  let user;
-  
   try {
-    user = await requireAdmin();
-  } catch (error) {
+    await requireAdmin();
+  } catch {
     redirect("/auth/login");
   }
 

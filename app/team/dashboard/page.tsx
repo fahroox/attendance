@@ -9,7 +9,7 @@ export default async function TeamDashboard() {
   
   try {
     user = await requireAuth();
-  } catch (error) {
+  } catch {
     redirect("/auth/login");
   }
 
@@ -29,7 +29,7 @@ export default async function TeamDashboard() {
         <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
           <Card>
             <CardHeader>
-              <CardTitle>Today's Status</CardTitle>
+              <CardTitle>Today&apos;s Status</CardTitle>
               <CardDescription>
                 Your attendance for today
               </CardDescription>

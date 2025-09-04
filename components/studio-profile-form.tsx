@@ -63,7 +63,7 @@ export function StudioProfileForm({ initialData }: StudioProfileFormProps) {
       setHiddenLatitude(initialData.latitude.toString());
       setHiddenLongitude(initialData.longitude.toString());
     }
-  }, [initialData]);
+  }, [initialData, extractedCoordinates.latitude, extractedCoordinates.longitude]);
 
   const handleInputChange = (field: string, value: string) => {
     setFormData(prev => ({
@@ -269,7 +269,7 @@ export function StudioProfileForm({ initialData }: StudioProfileFormProps) {
              (extractedCoordinates.latitude === null || extractedCoordinates.longitude === null) && (
               <div className="mt-2 p-3 bg-yellow-50 border border-yellow-200 rounded-md">
                 <div className="text-sm text-yellow-700">
-                  ⚠️ Could not extract coordinates from this URL. Please ensure it's a valid Google Maps URL with coordinates.
+                  ⚠️ Could not extract coordinates from this URL. Please ensure it&apos;s a valid Google Maps URL with coordinates.
                 </div>
               </div>
             )}

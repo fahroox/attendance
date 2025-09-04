@@ -8,7 +8,7 @@ export default async function AdminDashboard() {
   
   try {
     user = await requireAdmin();
-  } catch (error) {
+  } catch {
     redirect("/auth/login");
   }
 

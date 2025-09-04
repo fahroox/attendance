@@ -1,9 +1,7 @@
 import { createClient } from "@/lib/supabase/server";
 import { redirect } from "next/navigation";
 import { DashboardSidebar } from "@/components/dashboard-sidebar";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
-import { Building2, Save, Check } from "lucide-react";
+import { Building2 } from "lucide-react";
 import { StudioProfileForm } from "@/components/studio-profile-form";
 
 export default async function StudioProfile() {
