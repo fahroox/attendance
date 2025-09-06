@@ -9,7 +9,7 @@ import { Save, Check, Building2, Tag, MapPin, ExternalLink } from "lucide-react"
 import { extractCoordinatesFromGoogleMapsUrl, validateCoordinates, formatCoordinates } from "@/lib/coordinates";
 import { StudioProfile } from "@/lib/types";
 import { createStudioProfile, updateStudioProfile } from "@/app/studio-profile/actions";
-import { showValidationErrorToast, showSaveSuccessToast, showOperationErrorToast } from "@/lib/toast";
+import { showSaveSuccessToast, showOperationErrorToast } from "@/lib/toast";
 
 interface StudioProfileFormWithActionsProps {
   initialData?: StudioProfile | null;
@@ -87,6 +87,7 @@ export function StudioProfileFormWithActions({
       setExtractedCoordinates(coordinates);
       setHiddenLatitude(coordinates.latitude?.toString() || '');
       setHiddenLongitude(coordinates.longitude?.toString() || '');
+      console.log(hiddenLatitude, hiddenLongitude)
     }
   };
 

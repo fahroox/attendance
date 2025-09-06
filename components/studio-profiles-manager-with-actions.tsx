@@ -19,11 +19,10 @@ export function StudioProfilesManagerWithActions({
   const [profiles, setProfiles] = useState<StudioProfile[]>(initialProfiles);
   const [editingProfile, setEditingProfile] = useState<StudioProfile | null>(null);
   const [showNewForm, setShowNewForm] = useState(false);
-  const [isDeleting, setIsDeleting] = useState<string | null>(null);
-  const [isPending, startTransition] = useTransition();
+  const [isPending] = useTransition();
 
   // Optimistic updates for better UX
-  const [optimisticProfiles, addOptimisticProfile] = useOptimistic(
+  const [optimisticProfiles] = useOptimistic(
     profiles,
     (state, newProfile: StudioProfile) => {
       if (editingProfile?.id) {
@@ -133,7 +132,7 @@ export function StudioProfilesManagerWithActions({
               profile={profile}
               onEdit={handleEditProfile}
               onDelete={handleDeleteProfile}
-              isDeleting={isDeleting === profile.id}
+              isDeleting={false}
               disabled={showNewForm || editingProfile !== null || isPending}
             />
           ))}
@@ -144,7 +143,7 @@ export function StudioProfilesManagerWithActions({
             <Building2 className="h-12 w-12 text-muted-foreground mb-4" />
             <h3 className="text-lg font-semibold mb-2">No Studio Profiles</h3>
             <p className="text-muted-foreground text-center mb-4">
-              You haven't created any studio profiles yet. Click the "Add New Studio" button to get started.
+              You haven&apos;t created any studio profiles yet. Click the &quot;Add New Studio&quot; button to get started.
             </p>
             <Button 
               onClick={() => {

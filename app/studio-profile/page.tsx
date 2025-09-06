@@ -3,6 +3,7 @@ import { redirect } from "next/navigation";
 import { DashboardSidebar } from "@/components/dashboard-sidebar";
 import { StudioProfilesManagerWithActions } from "@/components/studio-profiles-manager-with-actions";
 import { fetchStudioProfiles } from "./actions";
+import type { StudioProfile } from "@/lib/types";
 
 export default async function StudioProfile() {
   const supabase = await createClient();
@@ -47,7 +48,7 @@ export default async function StudioProfile() {
 
   // Fetch studio profiles using action
   const profilesResult = await fetchStudioProfiles();
-  const studioProfiles = profilesResult.success ? profilesResult.data as any[] : [];
+  const studioProfiles = profilesResult.success ? (profilesResult.data as StudioProfile[]) : [];
 
   return (
     <div className="min-h-screen bg-background flex">

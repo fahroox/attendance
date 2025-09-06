@@ -2,7 +2,6 @@
 
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { Badge } from "@/components/ui/badge";
 import { StudioProfile } from "@/lib/types";
 import { Building2, Edit, Trash2, MapPin, Calendar } from "lucide-react";
 import { showDeleteConfirmationToast } from "@/lib/toast";
