@@ -1,8 +1,8 @@
 import { createClient } from "@/lib/supabase/server";
 import { redirect } from "next/navigation";
 import { DashboardSidebar } from "@/components/dashboard-sidebar";
-import { Building2 } from "lucide-react";
-import { StudioProfileForm } from "@/components/studio-profile-form";
+import { StudioProfilesManagerWithActions } from "@/components/studio-profiles-manager-with-actions";
+import { fetchStudioProfiles } from "./actions";
 
 export default async function StudioProfile() {
   const supabase = await createClient();
@@ -45,11 +45,9 @@ export default async function StudioProfile() {
     redirect("/dashboard");
   }
 
-  // Get existing studio profile
-  const { data: studioProfile } = await supabase
-    .from('studio_profiles')
-    .select('*')
-    .single();
+  // Fetch studio profiles using action
+  const profilesResult = await fetchStudioProfiles();
+  const studioProfiles = profilesResult.success ? profilesResult.data as any[] : [];
 
   return (
     <div className="min-h-screen bg-background flex">
@@ -59,19 +57,7 @@ export default async function StudioProfile() {
       {/* Main Content */}
       <div className="flex-1 lg:ml-0">
         <div className="p-6 lg:p-8">
-          <div className="mb-8">
-            <h1 className="text-3xl font-bold flex items-center gap-2">
-              <Building2 className="h-8 w-8" />
-              Studio Profile
-            </h1>
-            <p className="text-muted-foreground">
-              Manage your design studio information and settings
-            </p>
-          </div>
-
-          <div className="max-w-2xl">
-            <StudioProfileForm initialData={studioProfile} />
-          </div>
+            <StudioProfilesManagerWithActions initialProfiles={studioProfiles || []} />
         </div>
       </div>
     </div>

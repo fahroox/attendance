@@ -15,3 +15,14 @@ export interface AuthUser {
   role: UserRole;
   full_name?: string;
 }
+
+export interface StudioProfile {
+  id?: string;
+  studio_name: string;
+  studio_tagline: string | null;
+  google_maps_url: string | null;
+  longitude: number | null;
+  latitude: number | null;
+  created_at?: string;
+  updated_at?: string;
+}

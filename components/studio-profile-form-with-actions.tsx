@@ -1,36 +1,27 @@
 "use client";
 
-import { useState, useEffect } from "react";
-import { useRouter } from "next/navigation";
-import { createClient } from "@/lib/supabase/client";
+import { useState, useEffect, useActionState } from "react";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Save, Check, Building2, Tag, MapPin, ExternalLink } from "lucide-react";
 import { extractCoordinatesFromGoogleMapsUrl, validateCoordinates, formatCoordinates } from "@/lib/coordinates";
-// import { toast } from "sonner";
+import { StudioProfile } from "@/lib/types";
+import { createStudioProfile, updateStudioProfile } from "@/app/studio-profile/actions";
+import { showValidationErrorToast, showSaveSuccessToast, showOperationErrorToast } from "@/lib/toast";
 
-interface StudioProfile {
-  id?: string;
-  studio_name: string;
-  studio_tagline: string | null;
-  google_maps_url: string | null;
-  longitude: number | null;
-  latitude: number | null;
-  created_at?: string;
-  updated_at?: string;
-}
-
-interface StudioProfileFormProps {
+interface StudioProfileFormWithActionsProps {
   initialData?: StudioProfile | null;
+  onSuccess?: (profile: StudioProfile) => void;
+  onCancel?: () => void;
 }
 
-export function StudioProfileForm({ initialData }: StudioProfileFormProps) {
-  const router = useRouter();
-  const [isLoading, setIsLoading] = useState(false);
-  const [isSuccess, setIsSuccess] = useState(false);
-  
+export function StudioProfileFormWithActions({ 
+  initialData, 
+  onSuccess, 
+  onCancel 
+}: StudioProfileFormWithActionsProps) {
   const [formData, setFormData] = useState({
     studio_name: initialData?.studio_name || "",
     studio_tagline: initialData?.studio_tagline || "",
@@ -46,16 +37,22 @@ export function StudioProfileForm({ initialData }: StudioProfileFormProps) {
   const [hiddenLatitude, setHiddenLatitude] = useState(initialData?.latitude?.toString() || '');
   const [hiddenLongitude, setHiddenLongitude] = useState(initialData?.longitude?.toString() || '');
 
+  // Use useActionState for form submission
+  const [createState, createAction, isCreatePending] = useActionState(createStudioProfile, {});
+  const [updateState, updateAction, isUpdatePending] = useActionState(updateStudioProfile, {});
+
+  const isPending = isCreatePending || isUpdatePending;
+  const currentState = initialData?.id ? updateState : createState;
+  const currentAction = initialData?.id ? updateAction : createAction;
+
   // Effect to handle initial data loading and coordinate extraction
   useEffect(() => {
     if (initialData?.google_maps_url && !extractedCoordinates.latitude && !extractedCoordinates.longitude) {
-      // If we have a URL but no coordinates, extract them
       const coordinates = extractCoordinatesFromGoogleMapsUrl(initialData.google_maps_url);
       setExtractedCoordinates(coordinates);
       setHiddenLatitude(coordinates.latitude?.toString() || '');
       setHiddenLongitude(coordinates.longitude?.toString() || '');
     } else if (initialData?.latitude && initialData?.longitude) {
-      // If we have existing coordinates, use them
       setExtractedCoordinates({
         latitude: initialData.latitude,
         longitude: initialData.longitude
@@ -63,7 +60,20 @@ export function StudioProfileForm({ initialData }: StudioProfileFormProps) {
       setHiddenLatitude(initialData.latitude.toString());
       setHiddenLongitude(initialData.longitude.toString());
     }
-  }, [initialData, extractedCoordinates.latitude, extractedCoordinates.longitude]);
+  }, [initialData]);
+
+  // Handle action state changes
+  useEffect(() => {
+    if (currentState.success && currentState.data) {
+      const savedProfile = Array.isArray(currentState.data) ? currentState.data[0] : currentState.data;
+      showSaveSuccessToast(savedProfile.studio_name, initialData?.id ? "updated" : "created");
+      if (onSuccess) {
+        onSuccess(savedProfile);
+      }
+    } else if (currentState.error) {
+      showOperationErrorToast("Save Studio Profile", currentState.error);
+    }
+  }, [currentState, onSuccess, initialData?.id]);
 
   const handleInputChange = (field: string, value: string) => {
     setFormData(prev => ({
@@ -75,100 +85,22 @@ export function StudioProfileForm({ initialData }: StudioProfileFormProps) {
     if (field === 'google_maps_url') {
       const coordinates = extractCoordinatesFromGoogleMapsUrl(value);
       setExtractedCoordinates(coordinates);
-      
-      // Update hidden inputs with extracted coordinates
       setHiddenLatitude(coordinates.latitude?.toString() || '');
       setHiddenLongitude(coordinates.longitude?.toString() || '');
     }
   };
 
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    setIsLoading(true);
-    setIsSuccess(false);
-
-    try {
-      const supabase = createClient();
-      
-      // Test the connection first
-      const { data: { user } } = await supabase.auth.getUser();
-      if (!user) {
-        throw new Error('User not authenticated');
-      }
-      
-      console.log('Current user:', user);
-      
-      // Check if user has admin role
-      const { data: userProfile } = await supabase
-        .from('user_profiles')
-        .select('role')
-        .eq('id', user.id)
-        .single();
-        
-      console.log('User profile:', userProfile);
-      
-      if (!userProfile || userProfile.role !== 'admin') {
-        throw new Error('User does not have admin permissions');
-      }
-      
-      // Validate required fields
-      if (!formData.studio_name.trim()) {
-        alert("Studio name is required");
-        setIsLoading(false);
-        return;
-      }
-
-      const profileData = {
-        studio_name: formData.studio_name.trim(),
-        studio_tagline: formData.studio_tagline.trim() || null,
-        google_maps_url: formData.google_maps_url.trim() || null,
-        longitude: hiddenLongitude && hiddenLongitude !== '' ? parseFloat(hiddenLongitude) : null,
-        latitude: hiddenLatitude && hiddenLatitude !== '' ? parseFloat(hiddenLatitude) : null,
-      };
-
-      console.log('Profile data being sent:', profileData);
-
-      if (initialData?.id) {
-        // Update existing profile
-        const { error } = await supabase
-          .from('studio_profiles')
-          .update(profileData)
-          .eq('id', initialData.id);
-
-        if (error) throw error;
-        
-        console.log("Studio profile updated successfully!");
-      } else {
-        // Create new profile
-        const { error } = await supabase
-          .from('studio_profiles')
-          .insert(profileData);
-
-        if (error) throw error;
-        
-        console.log("Studio profile created successfully!");
-      }
-
-      setIsSuccess(true);
-      setTimeout(() => {
-        setIsSuccess(false);
-        router.refresh();
-      }, 2000);
-
-    } catch (error) {
-      console.error('Error saving studio profile:', error);
-      console.error('Error details:', JSON.stringify(error, null, 2));
-      
-      // Show more specific error message
-      let errorMessage = "Failed to save studio profile. Please try again.";
-      if (error && typeof error === 'object' && 'message' in error) {
-        errorMessage = `Error: ${error.message}`;
-      }
-      
-      alert(errorMessage);
-    } finally {
-      setIsLoading(false);
+  const handleSubmit = (formData: FormData) => {
+    // Add hidden coordinate values to form data
+    formData.set('latitude', hiddenLatitude);
+    formData.set('longitude', hiddenLongitude);
+    
+    // Add ID for update operations
+    if (initialData?.id) {
+      formData.set('id', initialData.id);
     }
+    
+    currentAction(formData);
   };
 
   return (
@@ -176,18 +108,17 @@ export function StudioProfileForm({ initialData }: StudioProfileFormProps) {
       <CardHeader>
         <CardTitle className="flex items-center gap-2">
           <Building2 className="h-5 w-5" />
-          Studio Information
+          {initialData?.id ? 'Edit Studio Profile' : 'Create New Studio Profile'}
         </CardTitle>
         <CardDescription>
-          Manage your design studio information and settings
+          {initialData?.id 
+            ? `Update the information for ${initialData.studio_name}`
+            : 'Add a new studio profile to your collection'
+          }
         </CardDescription>
       </CardHeader>
       <CardContent>
-        <form onSubmit={handleSubmit} className="space-y-6">
-          {/* Hidden inputs for coordinates */}
-          <input type="hidden" name="latitude" value={hiddenLatitude} />
-          <input type="hidden" name="longitude" value={hiddenLongitude} />
-          
+        <form action={handleSubmit} className="space-y-6">
           {/* Studio Name */}
           <div className="space-y-2">
             <Label htmlFor="studio_name" className="flex items-center gap-2">
@@ -196,6 +127,7 @@ export function StudioProfileForm({ initialData }: StudioProfileFormProps) {
             </Label>
             <Input
               id="studio_name"
+              name="studio_name"
               type="text"
               placeholder="Enter your studio name"
               value={formData.studio_name}
@@ -213,6 +145,7 @@ export function StudioProfileForm({ initialData }: StudioProfileFormProps) {
             </Label>
             <Input
               id="studio_tagline"
+              name="studio_tagline"
               type="text"
               placeholder="Enter your studio tagline"
               value={formData.studio_tagline}
@@ -229,6 +162,7 @@ export function StudioProfileForm({ initialData }: StudioProfileFormProps) {
             </Label>
             <Input
               id="google_maps_url"
+              name="google_maps_url"
               type="url"
               placeholder="https://www.google.com/maps/place/Your+Studio/@-8.0019522,112.6069239,19z/data=..."
               value={formData.google_maps_url}
@@ -275,36 +209,40 @@ export function StudioProfileForm({ initialData }: StudioProfileFormProps) {
             )}
           </div>
 
-          {/* Save Button */}
+          {/* Action Buttons */}
           <div className="flex gap-4 pt-4">
             <Button 
               type="submit" 
-              disabled={isLoading}
+              disabled={isPending}
               className="flex items-center gap-2"
             >
-              {isLoading ? (
+              {isPending ? (
                 <>
                   <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin" />
-                  Saving...
+                  {initialData?.id ? 'Updating...' : 'Creating...'}
                 </>
-              ) : isSuccess ? (
+              ) : currentState.success ? (
                 <>
                   <Check className="h-4 w-4" />
-                  Saved!
+                  {initialData?.id ? 'Updated!' : 'Created!'}
                 </>
               ) : (
                 <>
                   <Save className="h-4 w-4" />
-                  Save Changes
+                  {initialData?.id ? 'Update Profile' : 'Create Profile'}
                 </>
               )}
             </Button>
             
-            {isSuccess && (
-              <div className="flex items-center gap-2 text-green-600">
-                <Check className="h-4 w-4" />
-                <span className="text-sm">Changes saved successfully!</span>
-              </div>
+            {onCancel && (
+              <Button 
+                type="button" 
+                variant="outline"
+                onClick={onCancel}
+                disabled={isPending}
+              >
+                Cancel
+              </Button>
             )}
           </div>
         </form>
