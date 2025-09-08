@@ -13,6 +13,7 @@ interface LocationAwareHeaderProps {
 
 export function LocationAwareHeader({ children }: LocationAwareHeaderProps) {
   const [showPermissionRequest, setShowPermissionRequest] = useState(false);
+  const [isDetecting, setIsDetecting] = useState(false);
 
   const handleStudioMatched = (studio: StudioProfile | null) => {
     // Studio matched - could be used for additional functionality
@@ -56,6 +57,7 @@ export function LocationAwareHeader({ children }: LocationAwareHeaderProps) {
         <LocationPermissionRequest
           onPermissionGranted={handlePermissionGranted}
           onPermissionDenied={handlePermissionDenied}
+          isDetecting={isDetecting}
         />
       )}
     </>
