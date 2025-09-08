@@ -19,22 +19,6 @@ export function LocationAccessIndicator({
   const [locationStatus, setLocationStatus] = useState<'checking' | 'granted' | 'denied' | 'unavailable' | 'not-secure' | 'prompt'>('checking');
   const [isRequesting, setIsRequesting] = useState(false);
 
-  useEffect(() => {
-    checkLocationSupport();
-  }, []);
-
-  // Auto-request permission when component mounts and conditions are met
-  useEffect(() => {
-    if (locationStatus === 'prompt' && !isRequesting) {
-      // Small delay to ensure UI is ready
-      const timer = setTimeout(() => {
-        requestLocationAccess();
-      }, 1000);
-      
-      return () => clearTimeout(timer);
-    }
-  }, [locationStatus, isRequesting, requestLocationAccess]);
-
   const checkLocationSupport = async () => {
     // Check if we're in a secure context (HTTPS)
     if (!window.isSecureContext) {
@@ -122,6 +106,22 @@ export function LocationAccessIndicator({
       setIsRequesting(false);
     }
   }, [onLocationGranted, onLocationDenied]);
+
+  useEffect(() => {
+    checkLocationSupport();
+  }, []);
+
+  // Auto-request permission when component mounts and conditions are met
+  useEffect(() => {
+    if (locationStatus === 'prompt' && !isRequesting) {
+      // Small delay to ensure UI is ready
+      const timer = setTimeout(() => {
+        requestLocationAccess();
+      }, 1000);
+      
+      return () => clearTimeout(timer);
+    }
+  }, [locationStatus, isRequesting, requestLocationAccess]);
 
   const getStatusIcon = () => {
     switch (locationStatus) {
