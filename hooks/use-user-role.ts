@@ -9,6 +9,7 @@ export function useUserRole() {
   const [isLoading, setIsLoading] = useState(true);
   const [isAdmin, setIsAdmin] = useState(false);
   const [hasTimedOut, setHasTimedOut] = useState(false);
+  const [hasAuthUser, setHasAuthUser] = useState(false);
 
   useEffect(() => {
     const supabase = createClient();
@@ -18,8 +19,20 @@ export function useUserRole() {
     timeoutId = setTimeout(() => {
       console.warn('useUserRole hook timed out, defaulting to non-admin');
       setHasTimedOut(true);
-      setUser(null);
-      setIsAdmin(false);
+      // If we have an auth user but no profile, create a default user
+      if (hasAuthUser) {
+        console.log('Creating default user for authenticated user without profile');
+        setUser({
+          id: 'unknown',
+          email: 'unknown@example.com',
+          role: 'team',
+          full_name: 'User'
+        });
+        setIsAdmin(false);
+      } else {
+        setUser(null);
+        setIsAdmin(false);
+      }
       setIsLoading(false);
     }, 5000); // 5 second timeout
     
@@ -34,11 +47,15 @@ export function useUserRole() {
         if (authError || !authUser) {
           console.log('No auth user, setting non-admin');
           clearTimeout(timeoutId);
+          setHasAuthUser(false);
           setUser(null);
           setIsAdmin(false);
           setIsLoading(false);
           return;
         }
+
+        // We have an auth user
+        setHasAuthUser(true);
 
         // Get user profile
         console.log('Getting user profile for:', authUser.id);
@@ -51,9 +68,15 @@ export function useUserRole() {
         console.log('Profile result:', { profile: !!profile, error: profileError });
 
         if (profileError || !profile) {
-          console.log('No profile found, setting non-admin');
+          console.log('No profile found, creating default user');
           clearTimeout(timeoutId);
-          setUser(null);
+          // Create a default user for authenticated users without profile
+          setUser({
+            id: authUser.id,
+            email: authUser.email || 'unknown@example.com',
+            role: 'team',
+            full_name: authUser.user_metadata?.full_name || 'User'
+          });
           setIsAdmin(false);
           setIsLoading(false);
           return;
@@ -89,6 +112,7 @@ export function useUserRole() {
         if (error || !session) {
           console.log('No initial session, setting non-admin');
           clearTimeout(timeoutId);
+          setHasAuthUser(false);
           setUser(null);
           setIsAdmin(false);
           setIsLoading(false);
@@ -100,6 +124,7 @@ export function useUserRole() {
       } catch (error) {
         console.error('Error checking initial session:', error);
         clearTimeout(timeoutId);
+        setHasAuthUser(false);
         setUser(null);
         setIsAdmin(false);
         setIsLoading(false);
@@ -113,11 +138,13 @@ export function useUserRole() {
       console.log('Auth state change:', event, { session: !!session });
       if (event === 'SIGNED_OUT' || !session) {
         console.log('User signed out, clearing state');
+        setHasAuthUser(false);
         setUser(null);
         setIsAdmin(false);
         setIsLoading(false);
       } else if (event === 'SIGNED_IN' || event === 'TOKEN_REFRESHED') {
         console.log('User signed in or token refreshed, getting user data');
+        setHasAuthUser(true);
         await getUser();
       }
     });

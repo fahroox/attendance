@@ -36,12 +36,12 @@ export function LocationPermissionGate({ children }: LocationPermissionGateProps
 
   // Handle redirect to login when user is not authenticated
   useEffect(() => {
-    if (!isUserLoading && !user && !isRedirecting) {
+    if (!isUserLoading && !user && !isRedirecting && !hasTimedOut) {
       console.log('User not authenticated, redirecting to login');
       setIsRedirecting(true);
       router.push('/auth/login');
     }
-  }, [isUserLoading, user, isRedirecting, router]);
+  }, [isUserLoading, user, isRedirecting, hasTimedOut, router]);
 
   const checkLocationSupport = async () => {
     // Check if we're in a secure context (HTTPS)
