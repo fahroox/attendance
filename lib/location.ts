@@ -13,8 +13,11 @@ export interface LocationMatch {
     id?: string;
     studio_name: string;
     studio_tagline: string | null;
+    google_maps_url: string | null;
     longitude: number | null;
     latitude: number | null;
+    created_at?: string;
+    updated_at?: string;
   };
   distance: number; // in meters
 }
@@ -60,8 +63,11 @@ export function findNearbyStudios(
     id?: string;
     studio_name: string;
     studio_tagline: string | null;
+    google_maps_url: string | null;
     longitude: number | null;
     latitude: number | null;
+    created_at?: string;
+    updated_at?: string;
   }>,
   maxDistance: number = 500
 ): LocationMatch[] {
