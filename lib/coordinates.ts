@@ -21,47 +21,19 @@ export function extractCoordinatesFromGoogleMapsUrl(url: string): Coordinates {
     // Clean the URL
     const cleanUrl = url.trim();
     
-    // Pattern 1: @lat,lng,zoom format (e.g., https://maps.google.com/maps?q=@40.7128,-74.0060,15z)
-    const atPattern = /@(-?\d+\.?\d*),(-?\d+\.?\d*)/;
-    const atMatch = cleanUrl.match(atPattern);
-    if (atMatch) {
+    // Pattern 1: Google Maps place URL with coordinates in data parameters (MOST ACCURATE)
+    // Format: ...data=!4m6!3m5!1s0x...!8m2!3dlat!4dlng!16s...
+    // This is the most accurate coordinate source in Google Maps URLs
+    const dataPattern = /!8m2!3d(-?\d+\.?\d*)!4d(-?\d+\.?\d*)!/;
+    const dataMatch = cleanUrl.match(dataPattern);
+    if (dataMatch) {
       return {
-        latitude: parseFloat(atMatch[1]),
-        longitude: parseFloat(atMatch[2])
+        latitude: parseFloat(dataMatch[1]),
+        longitude: parseFloat(dataMatch[2])
       };
     }
 
-    // Pattern 2: ll=lat,lng format (e.g., https://maps.google.com/maps?ll=40.7128,-74.0060)
-    const llPattern = /[?&]ll=(-?\d+\.?\d*),(-?\d+\.?\d*)/;
-    const llMatch = cleanUrl.match(llPattern);
-    if (llMatch) {
-      return {
-        latitude: parseFloat(llMatch[1]),
-        longitude: parseFloat(llMatch[2])
-      };
-    }
-
-    // Pattern 3: center=lat,lng format (e.g., https://maps.google.com/maps?center=40.7128,-74.0060)
-    const centerPattern = /[?&]center=(-?\d+\.?\d*),(-?\d+\.?\d*)/;
-    const centerMatch = cleanUrl.match(centerPattern);
-    if (centerMatch) {
-      return {
-        latitude: parseFloat(centerMatch[1]),
-        longitude: parseFloat(centerMatch[2])
-      };
-    }
-
-    // Pattern 4: q=lat,lng format (e.g., https://maps.google.com/maps?q=40.7128,-74.0060)
-    const qPattern = /[?&]q=(-?\d+\.?\d*),(-?\d+\.?\d*)(?:[^&]|$)/;
-    const qMatch = cleanUrl.match(qPattern);
-    if (qMatch) {
-      return {
-        latitude: parseFloat(qMatch[1]),
-        longitude: parseFloat(qMatch[2])
-      };
-    }
-
-    // Pattern 5: Google Maps place URL with coordinates in the path
+    // Pattern 2: Google Maps place URL with coordinates in the path
     // Format: https://www.google.com/maps/place/Place+Name/@lat,lng,zoom/data=...
     // Example: https://www.google.com/maps/place/Mahative+Studio/@-8.0019522,112.6069239,19z/data=...
     const placePattern = /\/place\/[^/]+\/@(-?\d+\.?\d*),(-?\d+\.?\d*),\d+z/;
@@ -73,14 +45,43 @@ export function extractCoordinatesFromGoogleMapsUrl(url: string): Coordinates {
       };
     }
 
-    // Pattern 6: Google Maps place URL with coordinates in data parameters
-    // Format: ...data=!4m6!3m5!1s0x...!8m2!3dlat!4dlng!16s...
-    const dataPattern = /!8m2!3d(-?\d+\.?\d*)!4d(-?\d+\.?\d*)!/;
-    const dataMatch = cleanUrl.match(dataPattern);
-    if (dataMatch) {
+    // Pattern 3: @lat,lng,zoom format (e.g., https://maps.google.com/maps?q=@40.7128,-74.0060,15z)
+    const atPattern = /@(-?\d+\.?\d*),(-?\d+\.?\d*)/;
+    const atMatch = cleanUrl.match(atPattern);
+    if (atMatch) {
       return {
-        latitude: parseFloat(dataMatch[1]),
-        longitude: parseFloat(dataMatch[2])
+        latitude: parseFloat(atMatch[1]),
+        longitude: parseFloat(atMatch[2])
+      };
+    }
+
+    // Pattern 4: ll=lat,lng format (e.g., https://maps.google.com/maps?ll=40.7128,-74.0060)
+    const llPattern = /[?&]ll=(-?\d+\.?\d*),(-?\d+\.?\d*)/;
+    const llMatch = cleanUrl.match(llPattern);
+    if (llMatch) {
+      return {
+        latitude: parseFloat(llMatch[1]),
+        longitude: parseFloat(llMatch[2])
+      };
+    }
+
+    // Pattern 5: center=lat,lng format (e.g., https://maps.google.com/maps?center=40.7128,-74.0060)
+    const centerPattern = /[?&]center=(-?\d+\.?\d*),(-?\d+\.?\d*)/;
+    const centerMatch = cleanUrl.match(centerPattern);
+    if (centerMatch) {
+      return {
+        latitude: parseFloat(centerMatch[1]),
+        longitude: parseFloat(centerMatch[2])
+      };
+    }
+
+    // Pattern 6: q=lat,lng format (e.g., https://maps.google.com/maps?q=40.7128,-74.0060)
+    const qPattern = /[?&]q=(-?\d+\.?\d*),(-?\d+\.?\d*)(?:[^&]|$)/;
+    const qMatch = cleanUrl.match(qPattern);
+    if (qMatch) {
+      return {
+        latitude: parseFloat(qMatch[1]),
+        longitude: parseFloat(qMatch[2])
       };
     }
 
