@@ -11,6 +11,15 @@ export function useUserRole() {
 
   useEffect(() => {
     const supabase = createClient();
+    let timeoutId: NodeJS.Timeout;
+    
+    // Set a timeout to prevent infinite loading
+    timeoutId = setTimeout(() => {
+      console.warn('useUserRole hook timed out, defaulting to non-admin');
+      setUser(null);
+      setIsAdmin(false);
+      setIsLoading(false);
+    }, 5000); // 5 second timeout
     
     // Get initial user
     const getUser = async () => {
@@ -22,6 +31,7 @@ export function useUserRole() {
         
         if (authError || !authUser) {
           console.log('No auth user, setting non-admin');
+          clearTimeout(timeoutId);
           setUser(null);
           setIsAdmin(false);
           setIsLoading(false);
@@ -40,6 +50,7 @@ export function useUserRole() {
 
         if (profileError || !profile) {
           console.log('No profile found, setting non-admin');
+          clearTimeout(timeoutId);
           setUser(null);
           setIsAdmin(false);
           setIsLoading(false);
@@ -54,11 +65,13 @@ export function useUserRole() {
         };
 
         console.log('User data set:', { role: profile.role, isAdmin: profile.role === 'admin' });
+        clearTimeout(timeoutId);
         setUser(userData);
         setIsAdmin(profile.role === 'admin');
         setIsLoading(false);
       } catch (error) {
         console.error('Error fetching user role:', error);
+        clearTimeout(timeoutId);
         setUser(null);
         setIsAdmin(false);
         setIsLoading(false);
@@ -73,6 +86,7 @@ export function useUserRole() {
         
         if (error || !session) {
           console.log('No initial session, setting non-admin');
+          clearTimeout(timeoutId);
           setUser(null);
           setIsAdmin(false);
           setIsLoading(false);
@@ -83,6 +97,7 @@ export function useUserRole() {
         await getUser();
       } catch (error) {
         console.error('Error checking initial session:', error);
+        clearTimeout(timeoutId);
         setUser(null);
         setIsAdmin(false);
         setIsLoading(false);
@@ -106,6 +121,7 @@ export function useUserRole() {
     });
 
     return () => {
+      clearTimeout(timeoutId);
       subscription.unsubscribe();
     };
   }, []);

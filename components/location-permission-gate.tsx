@@ -26,7 +26,7 @@ export function LocationPermissionGate({ children }: LocationPermissionGateProps
     const timeoutId = setTimeout(() => {
       console.warn('Location permission gate timed out, allowing access');
       setHasTimedOut(true);
-    }, 15000); // 15 second timeout
+    }, 8000); // 8 second timeout
     
     return () => clearTimeout(timeoutId);
   }, []);
@@ -151,6 +151,12 @@ export function LocationPermissionGate({ children }: LocationPermissionGateProps
         </Card>
       </div>
     );
+  }
+
+  // If user role check is taking too long, allow access (fallback)
+  if (isUserLoading && hasTimedOut) {
+    console.log('User role check timed out, allowing access as fallback');
+    return <>{children}</>;
   }
 
   // Admin users bypass all location checks
