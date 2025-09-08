@@ -1,7 +1,6 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { useRouter } from 'next/navigation';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { MapPin, AlertTriangle, Loader2 } from 'lucide-react';
@@ -19,7 +18,6 @@ export function LocationPermissionGate({ children }: LocationPermissionGateProps
   const [hasTimedOut, setHasTimedOut] = useState(false);
   const [isRedirecting, setIsRedirecting] = useState(false);
   const { isAdmin, isLoading: isUserLoading, user } = useUserRole();
-  const router = useRouter();
 
   useEffect(() => {
     setIsClient(true);
