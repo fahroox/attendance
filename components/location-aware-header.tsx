@@ -13,10 +13,10 @@ interface LocationAwareHeaderProps {
 
 export function LocationAwareHeader({ children }: LocationAwareHeaderProps) {
   const [showPermissionRequest, setShowPermissionRequest] = useState(false);
-  const [matchedStudio, setMatchedStudio] = useState<StudioProfile | null>(null);
 
   const handleStudioMatched = (studio: StudioProfile | null) => {
-    setMatchedStudio(studio);
+    // Studio matched - could be used for additional functionality
+    console.log('Studio matched:', studio?.studio_name);
   };
 
   const handlePermissionGranted = () => {

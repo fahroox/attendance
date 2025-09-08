@@ -6,7 +6,6 @@ import { useRouter } from 'next/navigation';
 import { LogoutButton } from '@/components/logout-button';
 import { StudioLocationMatcher } from '@/components/studio-location-matcher';
 import type { StudioProfile } from '@/lib/types';
-import { Button } from '@/components/ui/button';
 import { X, Menu, User } from 'lucide-react';
 
 interface LocationAwareDashboardSidebarProps {
@@ -20,11 +19,10 @@ interface LocationAwareDashboardSidebarProps {
 
 export function LocationAwareDashboardSidebar({ user }: LocationAwareDashboardSidebarProps) {
   const [isOpen, setIsOpen] = useState(false);
-  const [matchedStudio, setMatchedStudio] = useState<StudioProfile | null>(null);
-  const router = useRouter();
 
   const handleStudioMatched = (studio: StudioProfile | null) => {
-    setMatchedStudio(studio);
+    // Studio matched - could be used for additional functionality
+    console.log('Studio matched:', studio?.studio_name);
   };
 
   const toggleSidebar = () => {

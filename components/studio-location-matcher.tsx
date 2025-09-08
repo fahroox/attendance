@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect } from 'react';
 import { useLocationMatch } from '@/hooks/use-location-match';
 import { fetchPublicStudioProfiles } from '@/lib/studio-client';
 import type { StudioProfile } from '@/lib/types';
@@ -21,8 +21,7 @@ export function StudioLocationMatcher({ onStudioMatched, className = "" }: Studi
     matchedStudio,
     isDetecting,
     permissionStatus,
-    requestPermission,
-    clearMatch
+    requestPermission
   } = useLocationMatch(studios);
 
   useEffect(() => {
