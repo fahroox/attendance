@@ -11,23 +11,17 @@ export function useUserRole() {
 
   useEffect(() => {
     const supabase = createClient();
-    let timeoutId: NodeJS.Timeout;
     
-    // Get initial user with timeout
+    // Get initial user
     const getUser = async () => {
       try {
-        // Set a timeout to prevent infinite loading
-        timeoutId = setTimeout(() => {
-          console.warn('User role check timed out, defaulting to non-admin');
-          setUser(null);
-          setIsAdmin(false);
-          setIsLoading(false);
-        }, 10000); // 10 second timeout
-
+        console.log('Getting user role...');
         const { data: { user: authUser }, error: authError } = await supabase.auth.getUser();
         
+        console.log('Auth user result:', { authUser: !!authUser, error: authError });
+        
         if (authError || !authUser) {
-          clearTimeout(timeoutId);
+          console.log('No auth user, setting non-admin');
           setUser(null);
           setIsAdmin(false);
           setIsLoading(false);
@@ -35,16 +29,17 @@ export function useUserRole() {
         }
 
         // Get user profile
+        console.log('Getting user profile for:', authUser.id);
         const { data: profile, error: profileError } = await supabase
           .from('user_profiles')
           .select('*')
           .eq('id', authUser.id)
           .single();
 
-        clearTimeout(timeoutId);
+        console.log('Profile result:', { profile: !!profile, error: profileError });
 
         if (profileError || !profile) {
-          console.warn('Profile not found, defaulting to non-admin:', profileError);
+          console.log('No profile found, setting non-admin');
           setUser(null);
           setIsAdmin(false);
           setIsLoading(false);
@@ -58,11 +53,11 @@ export function useUserRole() {
           full_name: profile.full_name,
         };
 
+        console.log('User data set:', { role: profile.role, isAdmin: profile.role === 'admin' });
         setUser(userData);
         setIsAdmin(profile.role === 'admin');
         setIsLoading(false);
       } catch (error) {
-        clearTimeout(timeoutId);
         console.error('Error fetching user role:', error);
         setUser(null);
         setIsAdmin(false);
@@ -74,6 +69,7 @@ export function useUserRole() {
 
     // Listen for auth changes
     const { data: { subscription } } = supabase.auth.onAuthStateChange(async (event, session) => {
+      console.log('Auth state change:', event);
       if (event === 'SIGNED_OUT' || !session) {
         setUser(null);
         setIsAdmin(false);
@@ -84,7 +80,6 @@ export function useUserRole() {
     });
 
     return () => {
-      clearTimeout(timeoutId);
       subscription.unsubscribe();
     };
   }, []);

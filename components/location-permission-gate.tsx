@@ -15,11 +15,20 @@ export function LocationPermissionGate({ children }: LocationPermissionGateProps
   const [permissionStatus, setPermissionStatus] = useState<'checking' | 'granted' | 'denied' | 'prompt' | 'unavailable' | 'not-secure'>('checking');
   const [isRequesting, setIsRequesting] = useState(false);
   const [isClient, setIsClient] = useState(false);
+  const [hasTimedOut, setHasTimedOut] = useState(false);
   const { isAdmin, isLoading: isUserLoading } = useUserRole();
 
   useEffect(() => {
     setIsClient(true);
     checkLocationSupport();
+    
+    // Set a timeout to prevent infinite loading
+    const timeoutId = setTimeout(() => {
+      console.warn('Location permission gate timed out, allowing access');
+      setHasTimedOut(true);
+    }, 15000); // 15 second timeout
+    
+    return () => clearTimeout(timeoutId);
   }, []);
 
   const checkLocationSupport = async () => {
@@ -106,8 +115,27 @@ export function LocationPermissionGate({ children }: LocationPermissionGateProps
     }
   };
 
-  // Show loading state during hydration or user role check (with timeout)
-  if (!isClient || isUserLoading) {
+  // Show loading state during hydration
+  if (!isClient) {
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-background">
+        <Card className="w-full max-w-md">
+          <CardHeader className="text-center">
+            <div className="flex justify-center mb-2">
+              <Loader2 className="h-8 w-8 animate-spin text-blue-600" />
+            </div>
+            <CardTitle>Loading...</CardTitle>
+            <CardDescription>
+              Initializing application
+            </CardDescription>
+          </CardHeader>
+        </Card>
+      </div>
+    );
+  }
+
+  // Show loading state during user role check (with fallback)
+  if (isUserLoading && !hasTimedOut) {
     return (
       <div className="min-h-screen flex items-center justify-center bg-background">
         <Card className="w-full max-w-md">
@@ -127,6 +155,12 @@ export function LocationPermissionGate({ children }: LocationPermissionGateProps
 
   // Admin users bypass all location checks
   if (isAdmin) {
+    return <>{children}</>;
+  }
+
+  // If timed out, allow access (fallback)
+  if (hasTimedOut) {
+    console.log('Location permission gate timed out, allowing access');
     return <>{children}</>;
   }
 
