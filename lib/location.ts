@@ -10,7 +10,7 @@ export interface UserLocation {
 
 export interface LocationMatch {
   studio: {
-    id: string;
+    id?: string;
     studio_name: string;
     studio_tagline: string | null;
     longitude: number | null;
@@ -57,7 +57,7 @@ export function calculateDistance(
 export function findNearbyStudios(
   userLocation: UserLocation,
   studios: Array<{
-    id: string;
+    id?: string;
     studio_name: string;
     studio_tagline: string | null;
     longitude: number | null;
