@@ -3,9 +3,7 @@
 import { useState } from 'react';
 import Link from 'next/link';
 import { LogoutButton } from '@/components/logout-button';
-import { StudioLocationMatcher } from '@/components/studio-location-matcher';
-import type { StudioProfile } from '@/lib/types';
-import { X, Menu, User } from 'lucide-react';
+import { X, Menu, User, Building2 } from 'lucide-react';
 
 interface LocationAwareDashboardSidebarProps {
   user: {
@@ -18,11 +16,6 @@ interface LocationAwareDashboardSidebarProps {
 
 export function LocationAwareDashboardSidebar({ user }: LocationAwareDashboardSidebarProps) {
   const [isOpen, setIsOpen] = useState(false);
-
-  const handleStudioMatched = (studio: StudioProfile | null) => {
-    // Studio matched - could be used for additional functionality
-    console.log('Studio matched:', studio?.studio_name);
-  };
 
   const toggleSidebar = () => {
     setIsOpen(!isOpen);
@@ -48,10 +41,8 @@ export function LocationAwareDashboardSidebar({ user }: LocationAwareDashboardSi
           {/* Header */}
           <div className="flex items-center justify-between p-4 border-b border-border">
             <Link href="/dashboard" className="flex items-center gap-2" onClick={closeSidebar}>
-              <StudioLocationMatcher 
-                onStudioMatched={handleStudioMatched}
-                className="flex items-center gap-2"
-              />
+              <Building2 className="h-5 w-5" />
+              <span className="font-semibold">Design Studio</span>
             </Link>
             <button
               onClick={closeSidebar}

@@ -2,7 +2,6 @@ import type { Metadata } from "next";
 import { Geist } from "next/font/google";
 import { ThemeProvider } from "next-themes";
 import { Toaster } from "sonner";
-import { ConditionalLocationGate } from "@/components/conditional-location-gate";
 import "./globals.css";
 
 const defaultUrl = process.env.VERCEL_URL
@@ -35,9 +34,7 @@ export default function RootLayout({
           enableSystem
           disableTransitionOnChange
         >
-          <ConditionalLocationGate>
-            {children}
-          </ConditionalLocationGate>
+          {children}
           <Toaster richColors position="top-right" />
         </ThemeProvider>
       </body>
