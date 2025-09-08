@@ -13,7 +13,7 @@ interface LocationAwareHeaderProps {
 
 export function LocationAwareHeader({ children }: LocationAwareHeaderProps) {
   const [showPermissionRequest, setShowPermissionRequest] = useState(false);
-  const [isDetecting, setIsDetecting] = useState(false);
+  const isDetecting = false; // Static value since we're not tracking detection state in this component
 
   const handleStudioMatched = (studio: StudioProfile | null) => {
     // Studio matched - could be used for additional functionality
