@@ -62,10 +62,6 @@ export function StudioProfileFormWithActions({
     }
   }, [initialData]);
 
-  // Debug effect to log hidden values changes
-  useEffect(() => {
-    console.log('Hidden values changed:', { hiddenLatitude, hiddenLongitude });
-  }, [hiddenLatitude, hiddenLongitude]);
 
   // Handle action state changes
   useEffect(() => {
@@ -89,11 +85,9 @@ export function StudioProfileFormWithActions({
     // Extract coordinates when Google Maps URL changes
     if (field === 'google_maps_url') {
       const coordinates = extractCoordinatesFromGoogleMapsUrl(value);
-      console.log('Extracted coordinates:', coordinates);
       setExtractedCoordinates(coordinates);
       setHiddenLatitude(coordinates.latitude?.toString() || '');
       setHiddenLongitude(coordinates.longitude?.toString() || '');
-      console.log('Updated hidden values:', coordinates.latitude?.toString() || '', coordinates.longitude?.toString() || '');
     }
   };
 
