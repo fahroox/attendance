@@ -8,6 +8,7 @@ export function useUserRole() {
   const [user, setUser] = useState<AuthUser | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [isAdmin, setIsAdmin] = useState(false);
+  const [hasTimedOut, setHasTimedOut] = useState(false);
 
   useEffect(() => {
     const supabase = createClient();
@@ -16,6 +17,7 @@ export function useUserRole() {
     // Set a timeout to prevent infinite loading
     timeoutId = setTimeout(() => {
       console.warn('useUserRole hook timed out, defaulting to non-admin');
+      setHasTimedOut(true);
       setUser(null);
       setIsAdmin(false);
       setIsLoading(false);
@@ -124,7 +126,7 @@ export function useUserRole() {
       clearTimeout(timeoutId);
       subscription.unsubscribe();
     };
-  }, []);
+  }, []); // Empty dependency array to run only once
 
   return {
     user,
