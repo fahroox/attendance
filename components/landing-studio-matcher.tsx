@@ -19,9 +19,18 @@ export function LandingStudioMatcher({ className = "" }: LandingStudioMatcherPro
   const [studios, setStudios] = useState<StudioProfile[]>([]);
   const [nearestStudio, setNearestStudio] = useState<NearestStudio | null>(null);
   const [userLocation, setUserLocation] = useState<{ latitude: number; longitude: number } | null>(null);
+  const [allStudioDistances, setAllStudioDistances] = useState<Array<{studio: StudioProfile, distance: number}>>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [isDetecting, setIsDetecting] = useState(false);
   const [isClient, setIsClient] = useState(false);
+
+  const formatDistance = (distance: number): string => {
+    if (distance < 1000) {
+      return `${Math.round(distance)}m`;
+    } else {
+      return `${(distance / 1000).toFixed(1)}km`;
+    }
+  };
 
   useEffect(() => {
     setIsClient(true);
@@ -77,6 +86,7 @@ export function LandingStudioMatcher({ className = "" }: LandingStudioMatcherPro
     // Calculate distance to each studio and find the nearest one
     let nearest: NearestStudio | null = null;
     let minDistance = Infinity;
+    const allDistances: Array<{studio: StudioProfile, distance: number}> = [];
 
     studios.forEach((studio) => {
       if (studio.latitude && studio.longitude) {
@@ -89,6 +99,12 @@ export function LandingStudioMatcher({ className = "" }: LandingStudioMatcherPro
         
         console.log(`Distance to ${studio.studio_name}: ${distance}m`);
         
+        // Store all distances for debug display
+        allDistances.push({
+          studio: studio,
+          distance: distance
+        });
+        
         if (distance < minDistance) {
           minDistance = distance;
           nearest = {
@@ -99,6 +115,11 @@ export function LandingStudioMatcher({ className = "" }: LandingStudioMatcherPro
       }
     });
 
+    // Sort by distance for debug display
+    allDistances.sort((a, b) => a.distance - b.distance);
+    setAllStudioDistances(allDistances);
+
+    console.log('All studio distances:', allDistances);
     console.log('Found nearest studio:', nearest);
     setNearestStudio(nearest);
   };
@@ -259,7 +280,7 @@ export function LandingStudioMatcher({ className = "" }: LandingStudioMatcherPro
           </span>
         </div>
         <div className="text-xs text-muted-foreground ml-6 space-y-1">
-          <div>Distance: {Math.round(nearestStudio.distance)}m</div>
+          <div>Distance: {formatDistance(nearestStudio.distance)}</div>
           {userLocation && (
             <div>Lat: {userLocation.latitude.toFixed(6)}, Lon: {userLocation.longitude.toFixed(6)}</div>
           )}
@@ -281,8 +302,18 @@ export function LandingStudioMatcher({ className = "" }: LandingStudioMatcherPro
         </div>
       )}
       {/* Debug info */}
-      <div className="text-xs text-red-500 ml-6">
-        Debug: Studios: {studios.length}, Nearest: {nearestStudio ? 'Found' : 'None'}, Loading: {isLoading ? 'Yes' : 'No'}, Detecting: {isDetecting ? 'Yes' : 'No'}
+      <div className="text-xs text-red-500 ml-6 space-y-1">
+        <div>Debug: Studios: {studios.length}, Nearest: {nearestStudio ? 'Found' : 'None'}, Loading: {isLoading ? 'Yes' : 'No'}, Detecting: {isDetecting ? 'Yes' : 'No'}</div>
+        {allStudioDistances.length > 0 && (
+          <div>
+            <div className="font-semibold">All Studio Distances:</div>
+            {allStudioDistances.map((item, index) => (
+              <div key={index} className="ml-2">
+                {item.studio.studio_name}: {formatDistance(item.distance)}
+              </div>
+            ))}
+          </div>
+        )}
       </div>
     </div>
   );
