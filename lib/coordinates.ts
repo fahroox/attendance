@@ -21,21 +21,10 @@ export function extractCoordinatesFromGoogleMapsUrl(url: string): Coordinates {
     // Clean the URL
     const cleanUrl = url.trim();
     
-    // Pattern 1: Google Maps place URL with coordinates in data parameters (MOST ACCURATE)
-    // Format: ...data=!4m6!3m5!1s0x...!8m2!3dlat!4dlng!16s...
-    // This is the most accurate coordinate source in Google Maps URLs
-    const dataPattern = /!8m2!3d(-?\d+\.?\d*)!4d(-?\d+\.?\d*)!/;
-    const dataMatch = cleanUrl.match(dataPattern);
-    if (dataMatch) {
-      return {
-        latitude: parseFloat(dataMatch[1]),
-        longitude: parseFloat(dataMatch[2])
-      };
-    }
-
-    // Pattern 2: Google Maps place URL with coordinates in the path
+    // Pattern 1: Google Maps place URL with coordinates in the path (PRIORITY)
     // Format: https://www.google.com/maps/place/Place+Name/@lat,lng,zoom/data=...
     // Example: https://www.google.com/maps/place/Mahative+Studio/@-8.0019522,112.6069239,19z/data=...
+    // This is the user-selected coordinates in the URL
     const placePattern = /\/place\/[^/]+\/@(-?\d+\.?\d*),(-?\d+\.?\d*),\d+z/;
     const placeMatch = cleanUrl.match(placePattern);
     if (placeMatch) {
@@ -45,13 +34,26 @@ export function extractCoordinatesFromGoogleMapsUrl(url: string): Coordinates {
       };
     }
 
-    // Pattern 3: @lat,lng,zoom format (e.g., https://maps.google.com/maps?q=@40.7128,-74.0060,15z)
+    // Pattern 2: @lat,lng,zoom format (fallback for non-place URLs)
+    // Format: https://maps.google.com/maps?q=@40.7128,-74.0060,15z
     const atPattern = /@(-?\d+\.?\d*),(-?\d+\.?\d*)/;
     const atMatch = cleanUrl.match(atPattern);
     if (atMatch) {
       return {
         latitude: parseFloat(atMatch[1]),
         longitude: parseFloat(atMatch[2])
+      };
+    }
+
+    // Pattern 3: Google Maps place URL with coordinates in data parameters (fallback)
+    // Format: ...data=!4m6!3m5!1s0x...!8m2!3dlat!4dlng!16s...
+    // This is used as fallback when @ coordinates are not available
+    const dataPattern = /!8m2!3d(-?\d+\.?\d*)!4d(-?\d+\.?\d*)!/;
+    const dataMatch = cleanUrl.match(dataPattern);
+    if (dataMatch) {
+      return {
+        latitude: parseFloat(dataMatch[1]),
+        longitude: parseFloat(dataMatch[2])
       };
     }
 
