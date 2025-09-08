@@ -1,11 +1,19 @@
 'use client';
 
+import { useState, useEffect } from 'react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Shield, AlertTriangle, CheckCircle } from 'lucide-react';
 
 export function LocationAccessGuide() {
-  const isSecureContext = typeof window !== 'undefined' ? window.isSecureContext : false;
-  const hasGeolocation = typeof navigator !== 'undefined' ? 'geolocation' in navigator : false;
+  const [isSecureContext, setIsSecureContext] = useState(false);
+  const [hasGeolocation, setHasGeolocation] = useState(false);
+  const [isClient, setIsClient] = useState(false);
+
+  useEffect(() => {
+    setIsClient(true);
+    setIsSecureContext(window.isSecureContext);
+    setHasGeolocation('geolocation' in navigator);
+  }, []);
 
   const getStatusInfo = () => {
     if (!isSecureContext) {
@@ -37,6 +45,23 @@ export function LocationAccessGuide() {
     };
   };
 
+  // Show loading state during hydration to prevent mismatch
+  if (!isClient) {
+    return (
+      <Card className="w-full max-w-2xl mx-auto">
+        <CardHeader className="text-center">
+          <div className="flex justify-center mb-2">
+            <CheckCircle className="h-6 w-6 text-gray-400" />
+          </div>
+          <CardTitle className="text-xl">Checking Location Access</CardTitle>
+          <CardDescription>
+            Verifying browser compatibility...
+          </CardDescription>
+        </CardHeader>
+      </Card>
+    );
+  }
+
   const statusInfo = getStatusInfo();
 
   return (
@@ -55,7 +80,7 @@ export function LocationAccessGuide() {
         <div className="text-center">
           <h3 className="font-semibold text-lg mb-2">{statusInfo.title}</h3>
           <p className="text-sm text-muted-foreground">
-            Current environment: {typeof window !== 'undefined' ? window.location.protocol : 'Unknown'}
+            Current environment: {isClient ? window.location.protocol : 'Loading...'}
           </p>
         </div>
 
