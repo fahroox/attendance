@@ -4,8 +4,9 @@ import { useState, useEffect } from 'react';
 import { useLocationMatch } from '@/hooks/use-location-match';
 import { fetchPublicStudioProfiles } from '@/lib/studio-client';
 import type { StudioProfile } from '@/lib/types';
-import { MapPin, Loader2 } from 'lucide-react';
+import { MapPin, Loader2, Shield } from 'lucide-react';
 import { toast } from 'sonner';
+import { useUserRole } from '@/hooks/use-user-role';
 
 interface StudioLocationMatcherProps {
   onStudioMatched?: (studio: StudioProfile | null) => void;
@@ -16,6 +17,7 @@ export function StudioLocationMatcher({ onStudioMatched, className = "" }: Studi
   const [studios, setStudios] = useState<StudioProfile[]>([]);
   const [isLoadingStudios, setIsLoadingStudios] = useState(true);
   const [isClient, setIsClient] = useState(false);
+  const { isAdmin, isLoading: isUserLoading } = useUserRole();
 
   const {
     matchedStudio,
@@ -62,12 +64,24 @@ export function StudioLocationMatcher({ onStudioMatched, className = "" }: Studi
     onStudioMatched?.(matchedStudio);
   }, [matchedStudio, onStudioMatched]);
 
-  // Show loading state during hydration
-  if (!isClient) {
+  // Show loading state during hydration or user role check
+  if (!isClient || isUserLoading) {
     return (
       <div className={`flex items-center gap-2 ${className}`}>
         <Loader2 className="h-4 w-4 animate-spin text-blue-600" />
         <span className="text-lg font-semibold">Loading...</span>
+      </div>
+    );
+  }
+
+  // Admin users bypass location checks and show admin indicator
+  if (isAdmin) {
+    return (
+      <div className={`flex items-center gap-2 ${className}`}>
+        <Shield className="h-4 w-4 text-purple-600" />
+        <span className="text-lg font-semibold text-purple-700 dark:text-purple-400">
+          Admin Access
+        </span>
       </div>
     );
   }

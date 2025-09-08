@@ -3,8 +3,9 @@
 import { useState, useEffect } from 'react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { MapPin, AlertTriangle, Loader2 } from 'lucide-react';
+import { MapPin, AlertTriangle, Loader2, Shield } from 'lucide-react';
 import { toast } from 'sonner';
+import { useUserRole } from '@/hooks/use-user-role';
 
 interface LocationPermissionGateProps {
   children: React.ReactNode;
@@ -14,6 +15,7 @@ export function LocationPermissionGate({ children }: LocationPermissionGateProps
   const [permissionStatus, setPermissionStatus] = useState<'checking' | 'granted' | 'denied' | 'prompt' | 'unavailable' | 'not-secure'>('checking');
   const [isRequesting, setIsRequesting] = useState(false);
   const [isClient, setIsClient] = useState(false);
+  const { isAdmin, isLoading: isUserLoading } = useUserRole();
 
   useEffect(() => {
     setIsClient(true);
@@ -104,8 +106,8 @@ export function LocationPermissionGate({ children }: LocationPermissionGateProps
     }
   };
 
-  // Show loading state during hydration
-  if (!isClient) {
+  // Show loading state during hydration or user role check
+  if (!isClient || isUserLoading) {
     return (
       <div className="min-h-screen flex items-center justify-center bg-background">
         <Card className="w-full max-w-md">
@@ -115,12 +117,17 @@ export function LocationPermissionGate({ children }: LocationPermissionGateProps
             </div>
             <CardTitle>Loading...</CardTitle>
             <CardDescription>
-              Checking location access requirements
+              Checking access requirements
             </CardDescription>
           </CardHeader>
         </Card>
       </div>
     );
+  }
+
+  // Admin users bypass all location checks
+  if (isAdmin) {
+    return <>{children}</>;
   }
 
   // If permission is granted, check if user is within studio range

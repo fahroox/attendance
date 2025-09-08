@@ -5,6 +5,7 @@ import { useLocationMatch } from '@/hooks/use-location-match';
 import { fetchPublicStudioProfiles } from '@/lib/studio-client';
 import { OutOfStudioPage } from './out-of-studio-page';
 import type { StudioProfile } from '@/lib/types';
+import { useUserRole } from '@/hooks/use-user-role';
 
 interface StudioLocationGuardProps {
   children: React.ReactNode;
@@ -15,6 +16,7 @@ export function StudioLocationGuard({ children }: StudioLocationGuardProps) {
   const [isLoadingStudios, setIsLoadingStudios] = useState(true);
   const [isClient, setIsClient] = useState(false);
   const [hasCheckedLocation, setHasCheckedLocation] = useState(false);
+  const { isAdmin, isLoading: isUserLoading } = useUserRole();
 
   const {
     matchedStudio,
@@ -53,8 +55,8 @@ export function StudioLocationGuard({ children }: StudioLocationGuardProps) {
     }
   }, [isClient, isLoadingStudios, studios.length, permissionStatus, matchedStudio, isDetecting, hasCheckedLocation, requestPermission]);
 
-  // Show loading state during hydration
-  if (!isClient) {
+  // Show loading state during hydration or user role check
+  if (!isClient || isUserLoading) {
     return (
       <div className="min-h-screen flex items-center justify-center bg-background">
         <div className="text-center space-y-4">
@@ -63,6 +65,11 @@ export function StudioLocationGuard({ children }: StudioLocationGuardProps) {
         </div>
       </div>
     );
+  }
+
+  // Admin users bypass all location checks
+  if (isAdmin) {
+    return <>{children}</>;
   }
 
   // Show loading state while fetching studios
