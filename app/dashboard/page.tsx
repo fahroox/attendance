@@ -1,6 +1,6 @@
 import { createClient } from "@/lib/supabase/server";
 import { redirect } from "next/navigation";
-import { DashboardSidebar } from "@/components/dashboard-sidebar";
+import { LocationAwareDashboardSidebar } from "@/components/location-aware-dashboard-sidebar";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import Link from "next/link";
@@ -44,7 +44,7 @@ export default async function Dashboard() {
   return (
     <div className="min-h-screen bg-background flex">
       {/* Sidebar */}
-      <DashboardSidebar user={user} />
+      <LocationAwareDashboardSidebar user={user} />
       
       {/* Main Content */}
       <div className="flex-1 lg:ml-0">

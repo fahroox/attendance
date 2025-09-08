@@ -1,6 +1,8 @@
 import { EnvVarWarning } from "@/components/env-var-warning";
 import { AuthButton } from "@/components/auth-button";
 import { ThemeSwitcher } from "@/components/theme-switcher";
+import { LocationAwareHeader } from "@/components/location-aware-header";
+import { LocationFeatureInfo } from "@/components/location-feature-info";
 import { hasEnvVars } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
@@ -10,14 +12,9 @@ export default function Home() {
   return (
     <main className="min-h-screen flex flex-col items-center">
       <div className="flex-1 w-full flex flex-col gap-20 items-center">
-        <nav className="w-full flex justify-center border-b border-b-foreground/10 h-16">
-          <div className="w-full max-w-5xl flex justify-between items-center p-3 px-5 text-sm">
-            <div className="flex gap-5 items-center font-semibold">
-              <Link href={"/"}>Design Studio Attendance</Link>
-            </div>
-            {!hasEnvVars ? <EnvVarWarning /> : <AuthButton />}
-          </div>
-        </nav>
+        <LocationAwareHeader>
+          {!hasEnvVars ? <EnvVarWarning /> : <AuthButton />}
+        </LocationAwareHeader>
         <div className="flex-1 flex flex-col gap-20 max-w-5xl p-5">
           <div className="flex flex-col items-center gap-8 text-center">
             <h1 className="text-4xl font-bold tracking-tight">
@@ -40,38 +37,44 @@ export default function Home() {
           </div>
           
           {hasEnvVars && (
-            <div className="grid gap-6 md:grid-cols-2">
-              <Card>
-                <CardHeader>
-                  <CardTitle>For Team Members</CardTitle>
-                  <CardDescription>
-                    Track your daily attendance and view your records
-                  </CardDescription>
-                </CardHeader>
-                <CardContent>
-                  <ul className="space-y-2 text-sm">
-                    <li>• Check in and check out</li>
-                    <li>• View attendance history</li>
-                    <li>• Track weekly/monthly stats</li>
-                  </ul>
-                </CardContent>
-              </Card>
+            <div className="space-y-8">
+              {/* Location Feature Info */}
+              <LocationFeatureInfo />
               
-              <Card>
-                <CardHeader>
-                  <CardTitle>For Administrators</CardTitle>
-                  <CardDescription>
-                    Manage your team and generate attendance reports
-                  </CardDescription>
-                </CardHeader>
-                <CardContent>
-                  <ul className="space-y-2 text-sm">
-                    <li>• Manage team members</li>
-                    <li>• View team attendance</li>
-                    <li>• Generate reports</li>
-                  </ul>
-                </CardContent>
-              </Card>
+              {/* Feature Cards */}
+              <div className="grid gap-6 md:grid-cols-2">
+                <Card>
+                  <CardHeader>
+                    <CardTitle>For Team Members</CardTitle>
+                    <CardDescription>
+                      Track your daily attendance and view your records
+                    </CardDescription>
+                  </CardHeader>
+                  <CardContent>
+                    <ul className="space-y-2 text-sm">
+                      <li>• Check in and check out</li>
+                      <li>• View attendance history</li>
+                      <li>• Track weekly/monthly stats</li>
+                    </ul>
+                  </CardContent>
+                </Card>
+                
+                <Card>
+                  <CardHeader>
+                    <CardTitle>For Administrators</CardTitle>
+                    <CardDescription>
+                      Manage your team and generate attendance reports
+                    </CardDescription>
+                  </CardHeader>
+                  <CardContent>
+                    <ul className="space-y-2 text-sm">
+                      <li>• Manage team members</li>
+                      <li>• View team attendance</li>
+                      <li>• Generate reports</li>
+                    </ul>
+                  </CardContent>
+                </Card>
+              </div>
             </div>
           )}
           

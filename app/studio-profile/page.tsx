@@ -1,6 +1,6 @@
 import { createClient } from "@/lib/supabase/server";
 import { redirect } from "next/navigation";
-import { DashboardSidebar } from "@/components/dashboard-sidebar";
+import { LocationAwareDashboardSidebar } from "@/components/location-aware-dashboard-sidebar";
 import { StudioProfilesManagerWithActions } from "@/components/studio-profiles-manager-with-actions";
 import { fetchStudioProfiles } from "./actions";
 import type { StudioProfile } from "@/lib/types";
@@ -53,7 +53,7 @@ export default async function StudioProfile() {
   return (
     <div className="min-h-screen bg-background flex">
       {/* Sidebar */}
-      <DashboardSidebar user={user} />
+      <LocationAwareDashboardSidebar user={user} />
       
       {/* Main Content */}
       <div className="flex-1 lg:ml-0">
