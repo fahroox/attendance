@@ -5,6 +5,7 @@ import Link from 'next/link';
 import { useLocationMatch } from '@/hooks/use-location-match';
 import { fetchPublicStudioProfiles } from '@/lib/studio-client';
 import { LocationPermissionRequest } from '@/components/location-permission-request';
+import { LocationAccessIndicator } from '@/components/location-access-indicator';
 import type { StudioProfile } from '@/lib/types';
 import { MapPin, RefreshCw, MapPinOff } from 'lucide-react';
 import { Button } from '@/components/ui/button';
@@ -79,24 +80,25 @@ export function LocationAwareHeader({ children }: LocationAwareHeaderProps) {
                     Detecting...
                   </div>
                 ) : (
-                  <div className="flex items-center gap-1">
-                    <Button
-                      variant="ghost"
-                      size="sm"
-                      onClick={matchedStudio ? clearMatch : () => setShowPermissionRequest(true)}
-                      className="h-6 px-2 text-xs"
-                      disabled={!window.isSecureContext}
-                    >
-                      {matchedStudio ? 'Clear' : 'Find Studio'}
-                    </Button>
-                    {permissionStatus === 'denied' && (
+                  <div className="flex items-center gap-2">
+                    <LocationAccessIndicator
+                      onLocationGranted={() => {
+                        if (!matchedStudio) {
+                          requestPermission();
+                        }
+                      }}
+                      onLocationDenied={() => {
+                        setShowPermissionRequest(true);
+                      }}
+                    />
+                    {matchedStudio && (
                       <Button
                         variant="ghost"
                         size="sm"
-                        onClick={() => setShowPermissionRequest(true)}
-                        className="h-6 px-2 text-xs text-red-600"
+                        onClick={clearMatch}
+                        className="h-6 px-2 text-xs"
                       >
-                        Enable Location
+                        Clear Match
                       </Button>
                     )}
                   </div>

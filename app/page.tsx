@@ -3,6 +3,8 @@ import { AuthButton } from "@/components/auth-button";
 import { ThemeSwitcher } from "@/components/theme-switcher";
 import { LocationAwareHeader } from "@/components/location-aware-header";
 import { LocationFeatureInfo } from "@/components/location-feature-info";
+import { LocationAccessIndicator } from "@/components/location-access-indicator";
+import { LocationAccessGuide } from "@/components/location-access-guide";
 import { hasEnvVars } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
@@ -38,6 +40,14 @@ export default function Home() {
           
           {hasEnvVars && (
             <div className="space-y-8">
+              {/* Location Access Guide */}
+              <LocationAccessGuide />
+              
+              {/* Location Access Indicator */}
+              <div className="flex justify-center">
+                <LocationAccessIndicator />
+              </div>
+              
               {/* Location Feature Info */}
               <LocationFeatureInfo />
               
