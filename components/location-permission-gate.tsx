@@ -1,6 +1,7 @@
 'use client';
 
 import { useState, useEffect } from 'react';
+import { useRouter } from 'next/navigation';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { MapPin, AlertTriangle, Loader2 } from 'lucide-react';
@@ -16,7 +17,9 @@ export function LocationPermissionGate({ children }: LocationPermissionGateProps
   const [isRequesting, setIsRequesting] = useState(false);
   const [isClient, setIsClient] = useState(false);
   const [hasTimedOut, setHasTimedOut] = useState(false);
+  const [isRedirecting, setIsRedirecting] = useState(false);
   const { isAdmin, isLoading: isUserLoading, user } = useUserRole();
+  const router = useRouter();
 
   useEffect(() => {
     setIsClient(true);
@@ -30,6 +33,15 @@ export function LocationPermissionGate({ children }: LocationPermissionGateProps
     
     return () => clearTimeout(timeoutId);
   }, []);
+
+  // Handle redirect to login when user is not authenticated
+  useEffect(() => {
+    if (!isUserLoading && !user && !isRedirecting) {
+      console.log('User not authenticated, redirecting to login');
+      setIsRedirecting(true);
+      router.push('/auth/login');
+    }
+  }, [isUserLoading, user, isRedirecting, router]);
 
   const checkLocationSupport = async () => {
     // Check if we're in a secure context (HTTPS)
@@ -159,17 +171,8 @@ export function LocationPermissionGate({ children }: LocationPermissionGateProps
     return <>{children}</>;
   }
 
-  // Admin users bypass all location checks
-  if (isAdmin) {
-    console.log('Admin user detected, bypassing location checks');
-    return <>{children}</>;
-  }
-
-  // If user is not authenticated (logged out), redirect to login
-  if (!isUserLoading && !user) {
-    console.log('User not authenticated, redirecting to login');
-    // Redirect to login page
-    window.location.href = '/auth/login';
+  // Show redirecting state when redirecting to login
+  if (isRedirecting) {
     return (
       <div className="min-h-screen flex items-center justify-center bg-background">
         <Card className="w-full max-w-md">
@@ -185,6 +188,12 @@ export function LocationPermissionGate({ children }: LocationPermissionGateProps
         </Card>
       </div>
     );
+  }
+
+  // Admin users bypass all location checks
+  if (isAdmin) {
+    console.log('Admin user detected, bypassing location checks');
+    return <>{children}</>;
   }
 
   // If timed out, allow access (fallback)
