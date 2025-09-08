@@ -39,9 +39,10 @@ export function LocationPermissionGate({ children }: LocationPermissionGateProps
     if (!isUserLoading && !user && !isRedirecting && !hasTimedOut) {
       console.log('User not authenticated, redirecting to login');
       setIsRedirecting(true);
-      router.push('/auth/login');
+      // Use window.location for more stable redirect
+      window.location.href = '/auth/login';
     }
-  }, [isUserLoading, user, isRedirecting, hasTimedOut, router]);
+  }, [isUserLoading, user, isRedirecting, hasTimedOut]);
 
   const checkLocationSupport = async () => {
     // Check if we're in a secure context (HTTPS)
