@@ -18,6 +18,7 @@ interface LandingStudioMatcherProps {
 export function LandingStudioMatcher({ className = "" }: LandingStudioMatcherProps) {
   const [studios, setStudios] = useState<StudioProfile[]>([]);
   const [nearestStudio, setNearestStudio] = useState<NearestStudio | null>(null);
+  const [userLocation, setUserLocation] = useState<{ latitude: number; longitude: number } | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [isDetecting, setIsDetecting] = useState(false);
   const [isClient, setIsClient] = useState(false);
@@ -58,12 +59,13 @@ export function LandingStudioMatcher({ className = "" }: LandingStudioMatcherPro
         });
       });
 
-      const userLocation = {
+      const location = {
         latitude: position.coords.latitude,
         longitude: position.coords.longitude,
       };
 
-      console.log('User location:', userLocation);
+      setUserLocation(location);
+      console.log('User location:', location);
       console.log('Available studios:', studios);
 
       // Calculate distance to each studio and find the nearest one
@@ -73,8 +75,8 @@ export function LandingStudioMatcher({ className = "" }: LandingStudioMatcherPro
       studios.forEach((studio) => {
         if (studio.latitude && studio.longitude) {
           const distance = calculateDistance(
-            userLocation.latitude,
-            userLocation.longitude,
+            location.latitude,
+            location.longitude,
             studio.latitude,
             studio.longitude
           );
@@ -147,20 +149,34 @@ export function LandingStudioMatcher({ className = "" }: LandingStudioMatcherPro
   // Show nearest studio
   if (nearestStudio) {
     return (
-      <div className={`flex items-center gap-2 ${className}`}>
-        <Building2 className="h-4 w-4 text-green-600" />
-        <span className="text-lg font-semibold text-green-700 dark:text-green-400">
-          {nearestStudio.studio.studio_name}
-        </span>
+      <div className={`flex flex-col gap-1 ${className}`}>
+        <div className="flex items-center gap-2">
+          <Building2 className="h-4 w-4 text-green-600" />
+          <span className="text-lg font-semibold text-green-700 dark:text-green-400">
+            {nearestStudio.studio.studio_name}
+          </span>
+        </div>
+        {userLocation && (
+          <div className="text-xs text-muted-foreground ml-6">
+            Lat: {userLocation.latitude.toFixed(6)}, Lon: {userLocation.longitude.toFixed(6)}
+          </div>
+        )}
       </div>
     );
   }
 
   // Show default title when no studio is found or location not available
   return (
-    <div className={`flex items-center gap-2 ${className}`}>
-      <MapPin className="h-4 w-4 text-blue-600" />
-      <span className="text-lg font-semibold">Design Studio Attendance</span>
+    <div className={`flex flex-col gap-1 ${className}`}>
+      <div className="flex items-center gap-2">
+        <MapPin className="h-4 w-4 text-blue-600" />
+        <span className="text-lg font-semibold">Design Studio Attendance</span>
+      </div>
+      {userLocation && (
+        <div className="text-xs text-muted-foreground ml-6">
+          Lat: {userLocation.latitude.toFixed(6)}, Lon: {userLocation.longitude.toFixed(6)}
+        </div>
+      )}
     </div>
   );
 }
