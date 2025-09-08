@@ -31,6 +31,7 @@ export function LandingStudioMatcher({ className = "" }: LandingStudioMatcherPro
     try {
       setIsLoading(true);
       const studioData = await fetchPublicStudioProfiles();
+      console.log('Loaded studios:', studioData);
       setStudios(studioData);
     } catch (error) {
       console.error('Failed to load studios:', error);
@@ -41,9 +42,11 @@ export function LandingStudioMatcher({ className = "" }: LandingStudioMatcherPro
 
   const findNearestStudio = async () => {
     if (!navigator.geolocation) {
+      console.log('Geolocation not supported');
       return;
     }
 
+    console.log('Starting location detection...');
     setIsDetecting(true);
 
     try {
@@ -60,6 +63,9 @@ export function LandingStudioMatcher({ className = "" }: LandingStudioMatcherPro
         longitude: position.coords.longitude,
       };
 
+      console.log('User location:', userLocation);
+      console.log('Available studios:', studios);
+
       // Calculate distance to each studio and find the nearest one
       let nearest: NearestStudio | null = null;
       let minDistance = Infinity;
@@ -73,6 +79,8 @@ export function LandingStudioMatcher({ className = "" }: LandingStudioMatcherPro
             studio.longitude
           );
           
+          console.log(`Distance to ${studio.studio_name}: ${distance}m`);
+          
           if (distance < minDistance) {
             minDistance = distance;
             nearest = {
@@ -83,6 +91,7 @@ export function LandingStudioMatcher({ className = "" }: LandingStudioMatcherPro
         }
       });
 
+      console.log('Found nearest studio:', nearest);
       setNearestStudio(nearest);
     } catch (error) {
       console.error('Error getting location:', error);
@@ -93,7 +102,9 @@ export function LandingStudioMatcher({ className = "" }: LandingStudioMatcherPro
 
   // Auto-trigger location detection when studios are loaded
   useEffect(() => {
+    console.log('Auto-trigger check:', { isClient, isLoading, studiosLength: studios.length, nearestStudio, isDetecting });
     if (isClient && !isLoading && studios.length > 0 && !nearestStudio && !isDetecting) {
+      console.log('Triggering location detection...');
       // Small delay to ensure everything is ready
       const timer = setTimeout(() => {
         findNearestStudio();
