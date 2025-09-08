@@ -108,6 +108,11 @@ export function LandingStudioMatcher({ className = "" }: LandingStudioMatcherPro
       setIsLoading(true);
       const studioData = await fetchPublicStudioProfiles();
       console.log('Loaded studios:', studioData);
+      console.log('Number of studios loaded:', studioData.length);
+      if (studioData.length > 0) {
+        console.log('First studio example:', studioData[0]);
+        console.log('First studio has coordinates:', studioData[0].latitude, studioData[0].longitude);
+      }
       setStudios(studioData);
     } catch (error) {
       console.error('Failed to load studios:', error);
@@ -275,6 +280,10 @@ export function LandingStudioMatcher({ className = "" }: LandingStudioMatcherPro
           Lat: {userLocation.latitude.toFixed(6)}, Lon: {userLocation.longitude.toFixed(6)}
         </div>
       )}
+      {/* Debug info */}
+      <div className="text-xs text-red-500 ml-6">
+        Debug: Studios: {studios.length}, Nearest: {nearestStudio ? 'Found' : 'None'}, Loading: {isLoading ? 'Yes' : 'No'}, Detecting: {isDetecting ? 'Yes' : 'No'}
+      </div>
     </div>
   );
 }
