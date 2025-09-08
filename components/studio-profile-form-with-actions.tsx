@@ -87,15 +87,10 @@ export function StudioProfileFormWithActions({
       setExtractedCoordinates(coordinates);
       setHiddenLatitude(coordinates.latitude?.toString() || '');
       setHiddenLongitude(coordinates.longitude?.toString() || '');
-      console.log(hiddenLatitude, hiddenLongitude)
     }
   };
 
   const handleSubmit = (formData: FormData) => {
-    // Add hidden coordinate values to form data
-    formData.set('latitude', hiddenLatitude);
-    formData.set('longitude', hiddenLongitude);
-    
     // Add ID for update operations
     if (initialData?.id) {
       formData.set('id', initialData.id);
@@ -120,6 +115,10 @@ export function StudioProfileFormWithActions({
       </CardHeader>
       <CardContent>
         <form action={handleSubmit} className="space-y-6">
+          {/* Hidden inputs for coordinates */}
+          <input type="hidden" name="latitude" value={hiddenLatitude} />
+          <input type="hidden" name="longitude" value={hiddenLongitude} />
+          
           {/* Studio Name */}
           <div className="space-y-2">
             <Label htmlFor="studio_name" className="flex items-center gap-2">
