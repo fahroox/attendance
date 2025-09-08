@@ -28,7 +28,7 @@ export function NearestStudioDisplay() {
 
   useEffect(() => {
     setIsClient(true);
-    fetchUserLocation();
+    // Don't automatically fetch location - let user click refresh button
   }, []);
 
   const fetchUserLocation = () => {
@@ -188,11 +188,14 @@ export function NearestStudioDisplay() {
             </Button>
           </div>
         ) : (
-          <p className="text-muted-foreground text-sm">No studio data available.</p>
+          <div className="text-center py-4">
+            <MapPin className="h-8 w-8 text-muted-foreground mx-auto mb-2" />
+            <p className="text-muted-foreground text-sm">Click "Find Nearest Studio" to get your location and find the closest studio</p>
+          </div>
         )}
         
         <Button onClick={fetchUserLocation} disabled={isLoading} className="w-full" variant="outline">
-          {isLoading ? 'Refreshing...' : 'Refresh Location'}
+          {isLoading ? 'Finding Nearest Studio...' : 'Find Nearest Studio'}
         </Button>
       </CardContent>
     </Card>
