@@ -55,11 +55,52 @@ export function LandingStudioMatcher({ className = "" }: LandingStudioMatcherPro
 
       setUserLocation(location);
       console.log('User location obtained:', location);
+      
+      // Find nearest studio immediately after getting location
+      await findNearestStudioWithLocation(location);
     } catch (error) {
       console.error('Error getting location:', error);
     } finally {
       setIsDetecting(false);
     }
+  };
+
+  const findNearestStudioWithLocation = async (userLocation: { latitude: number; longitude: number }) => {
+    if (studios.length === 0) {
+      console.log('No studios available yet');
+      return;
+    }
+
+    console.log('Finding nearest studio with location:', userLocation);
+    console.log('Available studios:', studios);
+
+    // Calculate distance to each studio and find the nearest one
+    let nearest: NearestStudio | null = null;
+    let minDistance = Infinity;
+
+    studios.forEach((studio) => {
+      if (studio.latitude && studio.longitude) {
+        const distance = calculateDistance(
+          userLocation.latitude,
+          userLocation.longitude,
+          studio.latitude,
+          studio.longitude
+        );
+        
+        console.log(`Distance to ${studio.studio_name}: ${distance}m`);
+        
+        if (distance < minDistance) {
+          minDistance = distance;
+          nearest = {
+            studio: studio,
+            distance: distance
+          };
+        }
+      }
+    });
+
+    console.log('Found nearest studio:', nearest);
+    setNearestStudio(nearest);
   };
 
   const loadStudios = async () => {
@@ -138,7 +179,7 @@ export function LandingStudioMatcher({ className = "" }: LandingStudioMatcherPro
 
   // Auto-trigger location detection when studios are loaded
   useEffect(() => {
-    console.log('Auto-trigger check:', { isClient, isLoading, studiosLength: studios.length, nearestStudio, isDetecting });
+    console.log('Auto-trigger check:', { isClient, isLoading, studiosLength: studios.length, nearestStudio, isDetecting, userLocation });
     if (isClient && !isLoading && studios.length > 0 && !nearestStudio && !isDetecting) {
       console.log('Triggering location detection...');
       // Small delay to ensure everything is ready
@@ -149,6 +190,14 @@ export function LandingStudioMatcher({ className = "" }: LandingStudioMatcherPro
       return () => clearTimeout(timer);
     }
   }, [isClient, isLoading, studios.length, nearestStudio, isDetecting]);
+
+  // Find nearest studio when studios are loaded and we have user location
+  useEffect(() => {
+    if (userLocation && studios.length > 0 && !nearestStudio) {
+      console.log('Studios loaded, finding nearest studio with existing location...');
+      findNearestStudioWithLocation(userLocation);
+    }
+  }, [userLocation, studios.length, nearestStudio]);
 
   // Show loading state during hydration
   if (!isClient) {
@@ -204,11 +253,12 @@ export function LandingStudioMatcher({ className = "" }: LandingStudioMatcherPro
             {nearestStudio.studio.studio_name}
           </span>
         </div>
-        {userLocation && (
-          <div className="text-xs text-muted-foreground ml-6">
-            Lat: {userLocation.latitude.toFixed(6)}, Lon: {userLocation.longitude.toFixed(6)}
-          </div>
-        )}
+        <div className="text-xs text-muted-foreground ml-6 space-y-1">
+          <div>Distance: {Math.round(nearestStudio.distance)}m</div>
+          {userLocation && (
+            <div>Lat: {userLocation.latitude.toFixed(6)}, Lon: {userLocation.longitude.toFixed(6)}</div>
+          )}
+        </div>
       </div>
     );
   }
