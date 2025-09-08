@@ -104,22 +104,25 @@ export function LandingStudioMatcher({ className = "" }: LandingStudioMatcherPro
 
       setUserLocation(location);
       console.log('User location obtained:', location);
-      
-      // Find nearest studio immediately after getting location
-      await findNearestStudioWithLocation(location);
     } catch (error) {
       console.error('Error getting location:', error);
     } finally {
       setIsDetecting(false);
     }
-  }, [findNearestStudioWithLocation]);
+  }, []);
 
   useEffect(() => {
     setIsClient(true);
     loadStudios();
-    // Automatically request location for testing
-    requestLocationImmediately();
-  }, [requestLocationImmediately]);
+  }, []);
+
+  // Automatically request location once when studios are loaded
+  useEffect(() => {
+    if (isClient && !isLoading && studios.length > 0 && !userLocation && !isDetecting) {
+      console.log('Auto-requesting location after studios loaded...');
+      requestLocationImmediately();
+    }
+  }, [isClient, isLoading, studios.length, userLocation, isDetecting, requestLocationImmediately]);
 
   const loadStudios = async () => {
     try {
@@ -143,80 +146,7 @@ export function LandingStudioMatcher({ className = "" }: LandingStudioMatcherPro
     }
   };
 
-  const findNearestStudio = useCallback(async () => {
-    if (!navigator.geolocation) {
-      console.log('Geolocation not supported');
-      return;
-    }
 
-    console.log('Starting location detection...');
-    setIsDetecting(true);
-
-    try {
-      const position = await new Promise<GeolocationPosition>((resolve, reject) => {
-        navigator.geolocation.getCurrentPosition(resolve, reject, {
-          enableHighAccuracy: true,
-          timeout: 10000,
-          maximumAge: 0,
-        });
-      });
-
-      const location = {
-        latitude: position.coords.latitude,
-        longitude: position.coords.longitude,
-      };
-
-      setUserLocation(location);
-      console.log('User location:', location);
-      console.log('Available studios:', studios);
-
-      // Calculate distance to each studio and find the nearest one
-      let nearest: NearestStudio | null = null;
-      let minDistance = Infinity;
-
-      studios.forEach((studio) => {
-        if (studio.latitude && studio.longitude) {
-          const distance = calculateDistance(
-            location.latitude,
-            location.longitude,
-            studio.latitude,
-            studio.longitude
-          );
-          
-          console.log(`Distance to ${studio.studio_name}: ${distance}m`);
-          
-          if (distance < minDistance) {
-            minDistance = distance;
-            nearest = {
-              studio: studio,
-              distance: distance
-            };
-          }
-        }
-      });
-
-      console.log('Found nearest studio:', nearest);
-      setNearestStudio(nearest);
-    } catch (error) {
-      console.error('Error getting location:', error);
-    } finally {
-      setIsDetecting(false);
-    }
-  }, [studios]);
-
-  // Auto-trigger location detection when studios are loaded
-  useEffect(() => {
-    console.log('Auto-trigger check:', { isClient, isLoading, studiosLength: studios.length, nearestStudio, isDetecting, userLocation });
-    if (isClient && !isLoading && studios.length > 0 && !nearestStudio && !isDetecting) {
-      console.log('Triggering location detection...');
-      // Small delay to ensure everything is ready
-      const timer = setTimeout(() => {
-        findNearestStudio();
-      }, 1000);
-      
-      return () => clearTimeout(timer);
-    }
-  }, [isClient, isLoading, studios.length, nearestStudio, isDetecting, findNearestStudio, userLocation]);
 
   // Find nearest studio when studios are loaded and we have user location
   useEffect(() => {
