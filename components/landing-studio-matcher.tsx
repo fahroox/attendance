@@ -97,8 +97,6 @@ export function LandingStudioMatcher({ className = "" }: LandingStudioMatcherPro
           studio.longitude
         );
         
-        console.log(`Distance to ${studio.studio_name}: ${distance}m`);
-        
         // Store all distances for debug display
         allDistances.push({
           studio: studio,
@@ -119,7 +117,6 @@ export function LandingStudioMatcher({ className = "" }: LandingStudioMatcherPro
     allDistances.sort((a, b) => a.distance - b.distance);
     setAllStudioDistances(allDistances);
 
-    console.log('All studio distances:', allDistances);
     console.log('Found nearest studio:', nearest);
     setNearestStudio(nearest);
   };
