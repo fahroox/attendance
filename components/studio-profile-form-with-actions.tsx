@@ -52,7 +52,7 @@ export function StudioProfileFormWithActions({
       setExtractedCoordinates(coordinates);
       setHiddenLatitude(coordinates.latitude?.toString() || '');
       setHiddenLongitude(coordinates.longitude?.toString() || '');
-    } else if (initialData?.latitude && initialData?.longitude) {
+    } else if (initialData?.latitude && initialData?.longitude && !extractedCoordinates.latitude && !extractedCoordinates.longitude) {
       setExtractedCoordinates({
         latitude: initialData.latitude,
         longitude: initialData.longitude
@@ -60,7 +60,12 @@ export function StudioProfileFormWithActions({
       setHiddenLatitude(initialData.latitude.toString());
       setHiddenLongitude(initialData.longitude.toString());
     }
-  }, [initialData, extractedCoordinates.latitude, extractedCoordinates.longitude]);
+  }, [initialData]);
+
+  // Debug effect to log hidden values changes
+  useEffect(() => {
+    console.log('Hidden values changed:', { hiddenLatitude, hiddenLongitude });
+  }, [hiddenLatitude, hiddenLongitude]);
 
   // Handle action state changes
   useEffect(() => {
@@ -84,9 +89,11 @@ export function StudioProfileFormWithActions({
     // Extract coordinates when Google Maps URL changes
     if (field === 'google_maps_url') {
       const coordinates = extractCoordinatesFromGoogleMapsUrl(value);
+      console.log('Extracted coordinates:', coordinates);
       setExtractedCoordinates(coordinates);
       setHiddenLatitude(coordinates.latitude?.toString() || '');
       setHiddenLongitude(coordinates.longitude?.toString() || '');
+      console.log('Updated hidden values:', coordinates.latitude?.toString() || '', coordinates.longitude?.toString() || '');
     }
   };
 
@@ -176,7 +183,7 @@ export function StudioProfileFormWithActions({
             {/* Display extracted coordinates */}
             {extractedCoordinates.latitude !== null && extractedCoordinates.longitude !== null && 
              validateCoordinates(extractedCoordinates) && (
-              <div className="mt-2 p-3 bg-green-50 border border-green-200 rounded-md">
+              <div key={`${extractedCoordinates.latitude}-${extractedCoordinates.longitude}`} className="mt-2 p-3 bg-green-50 border border-green-200 rounded-md">
                 <div className="flex items-center gap-2 text-green-700">
                   <MapPin className="h-4 w-4" />
                   <span className="text-sm font-medium">Coordinates extracted:</span>
@@ -201,7 +208,7 @@ export function StudioProfileFormWithActions({
             {/* Show warning if URL is provided but coordinates couldn't be extracted */}
             {formData.google_maps_url && 
              (extractedCoordinates.latitude === null || extractedCoordinates.longitude === null) && (
-              <div className="mt-2 p-3 bg-yellow-50 border border-yellow-200 rounded-md">
+              <div key={`warning-${formData.google_maps_url}`} className="mt-2 p-3 bg-yellow-50 border border-yellow-200 rounded-md">
                 <div className="text-sm text-yellow-700">
                   ⚠️ Could not extract coordinates from this URL. Please ensure it&apos;s a valid Google Maps URL with coordinates.
                 </div>
