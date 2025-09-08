@@ -28,7 +28,7 @@ export function NearestStudioDisplay() {
 
   useEffect(() => {
     setIsClient(true);
-    // Don't automatically fetch location - let user click refresh button
+    fetchUserLocation();
   }, []);
 
   const fetchUserLocation = () => {
@@ -134,7 +134,7 @@ export function NearestStudioDisplay() {
       <Card>
         <CardHeader>
           <CardTitle>Nearest Studio</CardTitle>
-          <CardDescription>Loading studio data...</CardDescription>
+          <CardDescription>Initializing...</CardDescription>
         </CardHeader>
         <CardContent className="flex items-center justify-center">
           <Loader2 className="h-6 w-6 animate-spin text-blue-600" />
@@ -156,7 +156,7 @@ export function NearestStudioDisplay() {
         {isLoading ? (
           <div className="flex items-center gap-2 text-muted-foreground">
             <Loader2 className="h-4 w-4 animate-spin" />
-            <span>Finding nearest studio...</span>
+            <span>Getting your location and finding nearest studio...</span>
           </div>
         ) : error ? (
           <div className="flex items-center gap-2 text-red-600">
@@ -190,12 +190,12 @@ export function NearestStudioDisplay() {
         ) : (
           <div className="text-center py-4">
             <MapPin className="h-8 w-8 text-muted-foreground mx-auto mb-2" />
-            <p className="text-muted-foreground text-sm">Click "Find Nearest Studio" to get your location and find the closest studio</p>
+            <p className="text-muted-foreground text-sm">No studio data available. Click "Refresh Location" to try again.</p>
           </div>
         )}
         
         <Button onClick={fetchUserLocation} disabled={isLoading} className="w-full" variant="outline">
-          {isLoading ? 'Finding Nearest Studio...' : 'Find Nearest Studio'}
+          {isLoading ? 'Refreshing...' : 'Refresh Location'}
         </Button>
       </CardContent>
     </Card>
