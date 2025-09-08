@@ -26,7 +26,41 @@ export function LandingStudioMatcher({ className = "" }: LandingStudioMatcherPro
   useEffect(() => {
     setIsClient(true);
     loadStudios();
+    // Automatically request location for testing
+    requestLocationImmediately();
   }, []);
+
+  const requestLocationImmediately = async () => {
+    if (!navigator.geolocation) {
+      console.log('Geolocation not supported');
+      return;
+    }
+
+    console.log('Automatically requesting location for testing...');
+    setIsDetecting(true);
+
+    try {
+      const position = await new Promise<GeolocationPosition>((resolve, reject) => {
+        navigator.geolocation.getCurrentPosition(resolve, reject, {
+          enableHighAccuracy: true,
+          timeout: 10000,
+          maximumAge: 0,
+        });
+      });
+
+      const location = {
+        latitude: position.coords.latitude,
+        longitude: position.coords.longitude,
+      };
+
+      setUserLocation(location);
+      console.log('User location obtained:', location);
+    } catch (error) {
+      console.error('Error getting location:', error);
+    } finally {
+      setIsDetecting(false);
+    }
+  };
 
   const loadStudios = async () => {
     try {
@@ -129,9 +163,16 @@ export function LandingStudioMatcher({ className = "" }: LandingStudioMatcherPro
   // Show loading state while fetching studios
   if (isLoading) {
     return (
-      <div className={`flex items-center gap-2 ${className}`}>
-        <Loader2 className="h-4 w-4 animate-spin text-blue-600" />
-        <span className="text-lg font-semibold">Loading Studios...</span>
+      <div className={`flex flex-col gap-1 ${className}`}>
+        <div className="flex items-center gap-2">
+          <Loader2 className="h-4 w-4 animate-spin text-blue-600" />
+          <span className="text-lg font-semibold">Loading Studios...</span>
+        </div>
+        {userLocation && (
+          <div className="text-xs text-muted-foreground ml-6">
+            Lat: {userLocation.latitude.toFixed(6)}, Lon: {userLocation.longitude.toFixed(6)}
+          </div>
+        )}
       </div>
     );
   }
@@ -139,9 +180,16 @@ export function LandingStudioMatcher({ className = "" }: LandingStudioMatcherPro
   // Show detecting state
   if (isDetecting) {
     return (
-      <div className={`flex items-center gap-2 ${className}`}>
-        <Loader2 className="h-4 w-4 animate-spin text-blue-600" />
-        <span className="text-lg font-semibold">Finding Nearby Studio...</span>
+      <div className={`flex flex-col gap-1 ${className}`}>
+        <div className="flex items-center gap-2">
+          <Loader2 className="h-4 w-4 animate-spin text-blue-600" />
+          <span className="text-lg font-semibold">Finding Nearby Studio...</span>
+        </div>
+        {userLocation && (
+          <div className="text-xs text-muted-foreground ml-6">
+            Lat: {userLocation.latitude.toFixed(6)}, Lon: {userLocation.longitude.toFixed(6)}
+          </div>
+        )}
       </div>
     );
   }
