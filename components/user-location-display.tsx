@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { MapPin, Loader2, RefreshCw, Building2, ExternalLink } from 'lucide-react';
 import { Button } from '@/components/ui/button';
@@ -24,7 +24,7 @@ export function UserLocationDisplay({ className = "" }: UserLocationDisplayProps
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
-  const findNearestStudio = async (userLocation: { latitude: number; longitude: number }) => {
+  const findNearestStudio = useCallback(async (userLocation: { latitude: number; longitude: number }) => {
     try {
       const supabase = createClient();
       const { data: studios, error } = await supabase
@@ -69,9 +69,9 @@ export function UserLocationDisplay({ className = "" }: UserLocationDisplayProps
     } catch (err) {
       console.error('Error finding nearest studio:', err);
     }
-  };
+  }, []);
 
-  const getCurrentLocation = async () => {
+  const getCurrentLocation = useCallback(async () => {
     if (!navigator.geolocation) {
       setError('Geolocation is not supported by this browser');
       return;
@@ -126,12 +126,12 @@ export function UserLocationDisplay({ className = "" }: UserLocationDisplayProps
     } finally {
       setIsLoading(false);
     }
-  };
+  }, [findNearestStudio]);
 
   // Get location on component mount
   useEffect(() => {
     getCurrentLocation();
-  }, []);
+  }, [getCurrentLocation]);
 
   return (
     <Card className={className}>

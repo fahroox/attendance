@@ -1,10 +1,10 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { fetchPublicStudioProfiles } from '@/lib/studio-client';
 import { calculateDistance } from '@/lib/coordinates';
 import type { StudioProfile } from '@/lib/types';
-import { MapPin, Loader2, Building2 } from 'lucide-react';
+import { MapPin, Loader2 } from 'lucide-react';
 
 interface NearestStudio {
   studio: StudioProfile;
@@ -32,49 +32,7 @@ export function LandingStudioMatcher({ className = "" }: LandingStudioMatcherPro
     }
   };
 
-  useEffect(() => {
-    setIsClient(true);
-    loadStudios();
-    // Automatically request location for testing
-    requestLocationImmediately();
-  }, []);
-
-  const requestLocationImmediately = async () => {
-    if (!navigator.geolocation) {
-      console.log('Geolocation not supported');
-      return;
-    }
-
-    console.log('Automatically requesting location for testing...');
-    setIsDetecting(true);
-
-    try {
-      const position = await new Promise<GeolocationPosition>((resolve, reject) => {
-        navigator.geolocation.getCurrentPosition(resolve, reject, {
-          enableHighAccuracy: true,
-          timeout: 10000,
-          maximumAge: 0,
-        });
-      });
-
-      const location = {
-        latitude: position.coords.latitude,
-        longitude: position.coords.longitude,
-      };
-
-      setUserLocation(location);
-      console.log('User location obtained:', location);
-      
-      // Find nearest studio immediately after getting location
-      await findNearestStudioWithLocation(location);
-    } catch (error) {
-      console.error('Error getting location:', error);
-    } finally {
-      setIsDetecting(false);
-    }
-  };
-
-  const findNearestStudioWithLocation = async (userLocation: { latitude: number; longitude: number }) => {
+  const findNearestStudioWithLocation = useCallback(async (userLocation: { latitude: number; longitude: number }) => {
     if (studios.length === 0) {
       console.log('No studios available yet');
       return;
@@ -119,7 +77,49 @@ export function LandingStudioMatcher({ className = "" }: LandingStudioMatcherPro
 
     console.log('Found nearest studio:', nearest);
     setNearestStudio(nearest);
-  };
+  }, [studios]);
+
+  const requestLocationImmediately = useCallback(async () => {
+    if (!navigator.geolocation) {
+      console.log('Geolocation not supported');
+      return;
+    }
+
+    console.log('Automatically requesting location for testing...');
+    setIsDetecting(true);
+
+    try {
+      const position = await new Promise<GeolocationPosition>((resolve, reject) => {
+        navigator.geolocation.getCurrentPosition(resolve, reject, {
+          enableHighAccuracy: true,
+          timeout: 10000,
+          maximumAge: 0,
+        });
+      });
+
+      const location = {
+        latitude: position.coords.latitude,
+        longitude: position.coords.longitude,
+      };
+
+      setUserLocation(location);
+      console.log('User location obtained:', location);
+      
+      // Find nearest studio immediately after getting location
+      await findNearestStudioWithLocation(location);
+    } catch (error) {
+      console.error('Error getting location:', error);
+    } finally {
+      setIsDetecting(false);
+    }
+  }, [findNearestStudioWithLocation]);
+
+  useEffect(() => {
+    setIsClient(true);
+    loadStudios();
+    // Automatically request location for testing
+    requestLocationImmediately();
+  }, [requestLocationImmediately]);
 
   const loadStudios = async () => {
     try {
@@ -143,7 +143,7 @@ export function LandingStudioMatcher({ className = "" }: LandingStudioMatcherPro
     }
   };
 
-  const findNearestStudio = async () => {
+  const findNearestStudio = useCallback(async () => {
     if (!navigator.geolocation) {
       console.log('Geolocation not supported');
       return;
@@ -202,7 +202,7 @@ export function LandingStudioMatcher({ className = "" }: LandingStudioMatcherPro
     } finally {
       setIsDetecting(false);
     }
-  };
+  }, [studios]);
 
   // Auto-trigger location detection when studios are loaded
   useEffect(() => {
@@ -216,7 +216,7 @@ export function LandingStudioMatcher({ className = "" }: LandingStudioMatcherPro
       
       return () => clearTimeout(timer);
     }
-  }, [isClient, isLoading, studios.length, nearestStudio, isDetecting]);
+  }, [isClient, isLoading, studios.length, nearestStudio, isDetecting, findNearestStudio, userLocation]);
 
   // Find nearest studio when studios are loaded and we have user location
   useEffect(() => {
@@ -224,7 +224,7 @@ export function LandingStudioMatcher({ className = "" }: LandingStudioMatcherPro
       console.log('Studios loaded, finding nearest studio with existing location...');
       findNearestStudioWithLocation(userLocation);
     }
-  }, [userLocation, studios.length, nearestStudio]);
+  }, [userLocation, studios.length, nearestStudio, findNearestStudioWithLocation]);
 
   // Show loading state during hydration
   if (!isClient) {
