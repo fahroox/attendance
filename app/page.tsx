@@ -10,6 +10,9 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import Link from "next/link";
 
+// Force dynamic rendering to handle cookies
+export const dynamic = 'force-dynamic';
+
 export default function Home() {
   return (
     <main className="min-h-screen flex flex-col items-center">
@@ -45,15 +48,7 @@ export default function Home() {
               
               {/* Location Access Indicator */}
               <div className="flex justify-center">
-                <LocationAccessIndicator 
-                  onLocationGranted={() => {
-                    // Auto-trigger location detection when permission is granted
-                    console.log('Location permission granted - ready for studio matching');
-                  }}
-                  onLocationDenied={() => {
-                    console.log('Location permission denied');
-                  }}
-                />
+                <LocationAccessIndicator />
               </div>
               
               {/* Location Feature Info */}
