@@ -1,14 +1,9 @@
 'use client';
 
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { Button } from '@/components/ui/button';
-import { MapPin, Shield, AlertTriangle, CheckCircle } from 'lucide-react';
+import { Shield, AlertTriangle, CheckCircle } from 'lucide-react';
 
-interface LocationAccessGuideProps {
-  onRequestAccess?: () => void;
-}
-
-export function LocationAccessGuide({ onRequestAccess }: LocationAccessGuideProps) {
+export function LocationAccessGuide() {
   const isSecureContext = typeof window !== 'undefined' ? window.isSecureContext : false;
   const hasGeolocation = typeof navigator !== 'undefined' ? 'geolocation' in navigator : false;
 
