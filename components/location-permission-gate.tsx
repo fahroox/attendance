@@ -3,7 +3,7 @@
 import { useState, useEffect } from 'react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { MapPin, AlertTriangle, Loader2, Shield } from 'lucide-react';
+import { MapPin, AlertTriangle, Loader2 } from 'lucide-react';
 import { toast } from 'sonner';
 import { useUserRole } from '@/hooks/use-user-role';
 
