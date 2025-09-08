@@ -4,7 +4,7 @@ import { useState, useEffect } from 'react';
 import { useLocationMatch } from '@/hooks/use-location-match';
 import { fetchPublicStudioProfiles } from '@/lib/studio-client';
 import type { StudioProfile } from '@/lib/types';
-import { MapPin, MapPinOff, Loader2 } from 'lucide-react';
+import { MapPin, Loader2 } from 'lucide-react';
 import { toast } from 'sonner';
 
 interface StudioLocationMatcherProps {
