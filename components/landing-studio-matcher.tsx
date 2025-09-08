@@ -124,16 +124,20 @@ export function LandingStudioMatcher({ className = "" }: LandingStudioMatcherPro
   const loadStudios = async () => {
     try {
       setIsLoading(true);
+      console.log('Starting to load studios...');
       const studioData = await fetchPublicStudioProfiles();
       console.log('Loaded studios:', studioData);
       console.log('Number of studios loaded:', studioData.length);
       if (studioData.length > 0) {
         console.log('First studio example:', studioData[0]);
         console.log('First studio has coordinates:', studioData[0].latitude, studioData[0].longitude);
+      } else {
+        console.log('No studios found in database - this might be due to RLS policies blocking access');
       }
       setStudios(studioData);
     } catch (error) {
       console.error('Failed to load studios:', error);
+      console.error('Error details:', error);
     } finally {
       setIsLoading(false);
     }
