@@ -83,7 +83,8 @@ export function LocationAwareHeader({ children }: LocationAwareHeaderProps) {
                   <div className="flex items-center gap-2">
                     <LocationAccessIndicator
                       onLocationGranted={() => {
-                        if (!matchedStudio) {
+                        // Auto-trigger location detection when permission is granted
+                        if (!matchedStudio && !isDetecting) {
                           requestPermission();
                         }
                       }}

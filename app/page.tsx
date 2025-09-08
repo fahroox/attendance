@@ -45,7 +45,15 @@ export default function Home() {
               
               {/* Location Access Indicator */}
               <div className="flex justify-center">
-                <LocationAccessIndicator />
+                <LocationAccessIndicator 
+                  onLocationGranted={() => {
+                    // Auto-trigger location detection when permission is granted
+                    console.log('Location permission granted - ready for studio matching');
+                  }}
+                  onLocationDenied={() => {
+                    console.log('Location permission denied');
+                  }}
+                />
               </div>
               
               {/* Location Feature Info */}

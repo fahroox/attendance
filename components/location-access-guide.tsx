@@ -91,13 +91,20 @@ export function LocationAccessGuide({ onRequestAccess }: LocationAccessGuideProp
           </div>
         </div>
 
-        {/* Action Button */}
-        {statusInfo.status === 'success' && onRequestAccess && (
+        {/* Auto-request Info */}
+        {statusInfo.status === 'success' && (
           <div className="text-center">
-            <Button onClick={onRequestAccess} className="w-full">
-              <MapPin className="h-4 w-4 mr-2" />
-              Request Location Access
-            </Button>
+            <div className="bg-green-50 dark:bg-green-950 p-4 rounded-lg border border-green-200 dark:border-green-800">
+              <div className="flex items-center justify-center gap-2 mb-2">
+                <CheckCircle className="h-4 w-4 text-green-600" />
+                <span className="text-sm font-medium text-green-800 dark:text-green-200">
+                  Auto-Request Enabled
+                </span>
+              </div>
+              <p className="text-xs text-green-700 dark:text-green-300">
+                Location permission will be requested automatically when you visit any page
+              </p>
+            </div>
           </div>
         )}
 

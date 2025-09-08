@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { Button } from '@/components/ui/button';
 import { MapPin, MapPinOff, AlertCircle, CheckCircle, Loader2 } from 'lucide-react';
 import { toast } from 'sonner';
@@ -22,6 +22,18 @@ export function LocationAccessIndicator({
   useEffect(() => {
     checkLocationSupport();
   }, []);
+
+  // Auto-request permission when component mounts and conditions are met
+  useEffect(() => {
+    if (locationStatus === 'prompt' && !isRequesting) {
+      // Small delay to ensure UI is ready
+      const timer = setTimeout(() => {
+        requestLocationAccess();
+      }, 1000);
+      
+      return () => clearTimeout(timer);
+    }
+  }, [locationStatus, isRequesting, requestLocationAccess]);
 
   const checkLocationSupport = async () => {
     // Check if we're in a secure context (HTTPS)
@@ -54,7 +66,7 @@ export function LocationAccessIndicator({
     }
   };
 
-  const requestLocationAccess = async () => {
+  const requestLocationAccess = useCallback(async () => {
     if (!navigator.geolocation) {
       toast.error('Location Not Supported', {
         description: 'Your browser does not support location services',
@@ -109,7 +121,7 @@ export function LocationAccessIndicator({
     } finally {
       setIsRequesting(false);
     }
-  };
+  }, [onLocationGranted, onLocationDenied]);
 
   const getStatusIcon = () => {
     switch (locationStatus) {
