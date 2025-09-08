@@ -65,16 +65,42 @@ export function useUserRole() {
       }
     };
 
-    getUser();
+    // Check initial session first
+    const checkInitialSession = async () => {
+      try {
+        const { data: { session }, error } = await supabase.auth.getSession();
+        console.log('Initial session check:', { session: !!session, error });
+        
+        if (error || !session) {
+          console.log('No initial session, setting non-admin');
+          setUser(null);
+          setIsAdmin(false);
+          setIsLoading(false);
+          return;
+        }
+        
+        // If we have a session, get user details
+        await getUser();
+      } catch (error) {
+        console.error('Error checking initial session:', error);
+        setUser(null);
+        setIsAdmin(false);
+        setIsLoading(false);
+      }
+    };
+
+    checkInitialSession();
 
     // Listen for auth changes
     const { data: { subscription } } = supabase.auth.onAuthStateChange(async (event, session) => {
-      console.log('Auth state change:', event);
+      console.log('Auth state change:', event, { session: !!session });
       if (event === 'SIGNED_OUT' || !session) {
+        console.log('User signed out, clearing state');
         setUser(null);
         setIsAdmin(false);
         setIsLoading(false);
       } else if (event === 'SIGNED_IN' || event === 'TOKEN_REFRESHED') {
+        console.log('User signed in or token refreshed, getting user data');
         await getUser();
       }
     });

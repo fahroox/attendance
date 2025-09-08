@@ -16,7 +16,7 @@ export function LocationPermissionGate({ children }: LocationPermissionGateProps
   const [isRequesting, setIsRequesting] = useState(false);
   const [isClient, setIsClient] = useState(false);
   const [hasTimedOut, setHasTimedOut] = useState(false);
-  const { isAdmin, isLoading: isUserLoading } = useUserRole();
+  const { isAdmin, isLoading: isUserLoading, user } = useUserRole();
 
   useEffect(() => {
     setIsClient(true);
@@ -155,7 +155,30 @@ export function LocationPermissionGate({ children }: LocationPermissionGateProps
 
   // Admin users bypass all location checks
   if (isAdmin) {
+    console.log('Admin user detected, bypassing location checks');
     return <>{children}</>;
+  }
+
+  // If user is not authenticated (logged out), redirect to login
+  if (!isUserLoading && !user) {
+    console.log('User not authenticated, redirecting to login');
+    // Redirect to login page
+    window.location.href = '/auth/login';
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-background">
+        <Card className="w-full max-w-md">
+          <CardHeader className="text-center">
+            <div className="flex justify-center mb-2">
+              <Loader2 className="h-8 w-8 animate-spin text-blue-600" />
+            </div>
+            <CardTitle>Redirecting...</CardTitle>
+            <CardDescription>
+              Please log in to access the application
+            </CardDescription>
+          </CardHeader>
+        </Card>
+      </div>
+    );
   }
 
   // If timed out, allow access (fallback)
