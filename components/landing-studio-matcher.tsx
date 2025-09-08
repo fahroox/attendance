@@ -229,7 +229,7 @@ export function LandingStudioMatcher({ className = "" }: LandingStudioMatcherPro
   // Show loading state during hydration
   if (!isClient) {
     return (
-      <div className={`flex items-center gap-2 ${className}`}>
+      <div className={`flex items-left gap-2 ${className}`}>
         <Loader2 className="h-4 w-4 animate-spin text-blue-600" />
         <span className="text-lg font-semibold">Loading...</span>
       </div>
@@ -240,7 +240,7 @@ export function LandingStudioMatcher({ className = "" }: LandingStudioMatcherPro
   if (isLoading) {
     return (
       <div className={`flex flex-col gap-1 ${className}`}>
-        <div className="flex items-center gap-2">
+        <div className="flex items-left gap-2">
           <Loader2 className="h-4 w-4 animate-spin text-blue-600" />
           <span className="text-lg font-semibold">Loading Studios...</span>
         </div>
@@ -257,7 +257,7 @@ export function LandingStudioMatcher({ className = "" }: LandingStudioMatcherPro
   if (isDetecting) {
     return (
       <div className={`flex flex-col gap-1 ${className}`}>
-        <div className="flex items-center gap-2">
+        <div className="flex items-left gap-2">
           <Loader2 className="h-4 w-4 animate-spin text-blue-600" />
           <span className="text-lg font-semibold">Finding Nearby Studio...</span>
         </div>
@@ -274,18 +274,17 @@ export function LandingStudioMatcher({ className = "" }: LandingStudioMatcherPro
   if (nearestStudio) {
     return (
       <div className={`flex flex-col gap-1 ${className}`}>
-        <div className="flex items-center gap-2">
-          <Building2 className="h-4 w-4 text-green-600" />
-          <span className="text-lg font-semibold text-green-700 dark:text-green-400">
+        <div className="flex items-left gap-2">
+          <span className="text-lg font-semibold">
             {nearestStudio.studio.studio_name}
           </span>
         </div>
-        <div className="text-xs text-muted-foreground ml-6 space-y-1">
+        {/* <div className="text-xs text-muted-foreground ml-6 space-y-1">
           <div>Distance: {formatDistance(nearestStudio.distance)}</div>
           {userLocation && (
             <div>Lat: {userLocation.latitude.toFixed(6)}, Lon: {userLocation.longitude.toFixed(6)}</div>
           )}
-        </div>
+        </div> */}
       </div>
     );
   }
@@ -293,7 +292,7 @@ export function LandingStudioMatcher({ className = "" }: LandingStudioMatcherPro
   // Show default title when no studio is found or location not available
   return (
     <div className={`flex flex-col gap-1 ${className}`}>
-      <div className="flex items-center gap-2">
+      <div className="flex items-left gap-2">
         <MapPin className="h-4 w-4 text-blue-600" />
         <span className="text-lg font-semibold">Design Studio Attendance</span>
       </div>
