@@ -1,55 +1,26 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import Link from 'next/link';
-import { useLocationMatch } from '@/hooks/use-location-match';
-import { fetchPublicStudioProfiles } from '@/lib/studio-client';
 import { LocationPermissionRequest } from '@/components/location-permission-request';
 import { LocationAccessIndicator } from '@/components/location-access-indicator';
+import { StudioLocationMatcher } from '@/components/studio-location-matcher';
 import type { StudioProfile } from '@/lib/types';
-import { MapPin, RefreshCw, MapPinOff } from 'lucide-react';
-import { Button } from '@/components/ui/button';
 
 interface LocationAwareHeaderProps {
   children?: React.ReactNode;
 }
 
 export function LocationAwareHeader({ children }: LocationAwareHeaderProps) {
-  const [studios, setStudios] = useState<StudioProfile[]>([]);
-  const [isLoadingStudios, setIsLoadingStudios] = useState(true);
   const [showPermissionRequest, setShowPermissionRequest] = useState(false);
-  
-  const { 
-    matchedStudio, 
-    isDetecting, 
-    permissionStatus,
-    clearMatch, 
-    requestPermission 
-  } = useLocationMatch(studios);
+  const [matchedStudio, setMatchedStudio] = useState<StudioProfile | null>(null);
 
-  // Fetch studios on component mount
-  useEffect(() => {
-    const loadStudios = async () => {
-      try {
-        const studioProfiles = await fetchPublicStudioProfiles();
-        setStudios(studioProfiles);
-      } catch (error) {
-        console.error('Failed to load studios:', error);
-      } finally {
-        setIsLoadingStudios(false);
-      }
-    };
-
-    loadStudios();
-  }, []);
-
-  const displayTitle = matchedStudio ? matchedStudio.studio_name : 'Design Studio Attendance';
-  const showLocationIcon = matchedStudio && !isDetecting;
-  const showLocationOffIcon = permissionStatus === 'denied' && !matchedStudio;
+  const handleStudioMatched = (studio: StudioProfile | null) => {
+    setMatchedStudio(studio);
+  };
 
   const handlePermissionGranted = () => {
     setShowPermissionRequest(false);
-    requestPermission();
   };
 
   const handlePermissionDenied = () => {
@@ -61,76 +32,31 @@ export function LocationAwareHeader({ children }: LocationAwareHeaderProps) {
       <nav className="w-full flex justify-center border-b border-b-foreground/10 h-16">
         <div className="w-full max-w-5xl flex justify-between items-center p-3 px-5 text-sm">
           <div className="flex gap-5 items-center font-semibold">
-            <Link href={"/"} className="flex items-center gap-2">
-              {showLocationIcon && (
-                <MapPin className="h-4 w-4 text-green-600" />
-              )}
-              {showLocationOffIcon && (
-                <MapPinOff className="h-4 w-4 text-red-500" />
-              )}
-              {displayTitle}
+            <Link href="/" className="flex items-center gap-2">
+              <StudioLocationMatcher 
+                onStudioMatched={handleStudioMatched}
+                className="flex items-center gap-2"
+              />
             </Link>
             
             {/* Location detection controls */}
-            {!isLoadingStudios && studios.length > 0 && (
-              <div className="flex items-center gap-2 ml-4">
-                {isDetecting ? (
-                  <div className="flex items-center gap-1 text-xs text-muted-foreground">
-                    <RefreshCw className="h-3 w-3 animate-spin" />
-                    Detecting...
-                  </div>
-                ) : (
-                  <div className="flex items-center gap-2">
-                    <LocationAccessIndicator
-                      onLocationGranted={() => {
-                        // Auto-trigger location detection when permission is granted
-                        if (!matchedStudio && !isDetecting) {
-                          requestPermission();
-                        }
-                      }}
-                      onLocationDenied={() => {
-                        setShowPermissionRequest(true);
-                      }}
-                    />
-                    {matchedStudio && (
-                      <Button
-                        variant="ghost"
-                        size="sm"
-                        onClick={clearMatch}
-                        className="h-6 px-2 text-xs"
-                      >
-                        Clear Match
-                      </Button>
-                    )}
-                  </div>
-                )}
-              </div>
-            )}
+            <div className="flex items-center gap-2 ml-4">
+              <LocationAccessIndicator
+                onLocationGranted={handlePermissionGranted}
+                onLocationDenied={handlePermissionDenied}
+              />
+            </div>
           </div>
           {children}
         </div>
       </nav>
 
-      {/* Permission Request Modal */}
+      {/* Location Permission Request Modal */}
       {showPermissionRequest && (
-        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
-          <div className="bg-background rounded-lg max-w-md w-full">
-            <LocationPermissionRequest
-              onPermissionGranted={handlePermissionGranted}
-              onPermissionDenied={handlePermissionDenied}
-              isDetecting={isDetecting}
-            />
-            <div className="p-4 border-t">
-              <Button
-                variant="outline"
-                onClick={() => setShowPermissionRequest(false)}
-                className="w-full"
-              >
-                Cancel
-              </Button>
-            </div>
-          </div>
-        </div>
+        <LocationPermissionRequest
+          onPermissionGranted={handlePermissionGranted}
+          onPermissionDenied={handlePermissionDenied}
+        />
       )}
     </>
   );
