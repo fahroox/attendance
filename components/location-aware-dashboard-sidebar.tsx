@@ -2,7 +2,6 @@
 
 import { useState } from 'react';
 import Link from 'next/link';
-import { useRouter } from 'next/navigation';
 import { LogoutButton } from '@/components/logout-button';
 import { StudioLocationMatcher } from '@/components/studio-location-matcher';
 import type { StudioProfile } from '@/lib/types';
