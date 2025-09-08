@@ -1,6 +1,7 @@
 import { createClient } from "@/lib/supabase/server";
 import { redirect } from "next/navigation";
 import { LocationAwareDashboardSidebar } from "@/components/location-aware-dashboard-sidebar";
+import { UserLocationDisplay } from "@/components/user-location-display";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import Link from "next/link";
@@ -75,6 +76,9 @@ export default async function Dashboard() {
               </CardContent>
             </Card>
           )}
+
+          {/* User Location Display */}
+          <UserLocationDisplay />
 
           {/* Attendance card for all users */}
           <Card>
