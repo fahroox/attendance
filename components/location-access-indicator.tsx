@@ -46,7 +46,7 @@ export function LocationAccessIndicator({
         permission.addEventListener('change', () => {
           setLocationStatus(permission.state);
         });
-      } catch (error) {
+      } catch {
         setLocationStatus('checking');
       }
     } else {
@@ -66,7 +66,7 @@ export function LocationAccessIndicator({
     setIsRequesting(true);
 
     try {
-      const position = await new Promise<GeolocationPosition>((resolve, reject) => {
+      await new Promise<GeolocationPosition>((resolve, reject) => {
         navigator.geolocation.getCurrentPosition(resolve, reject, {
           enableHighAccuracy: true,
           timeout: 10000,
@@ -81,22 +81,24 @@ export function LocationAccessIndicator({
       });
       
       onLocationGranted?.();
-    } catch (error: any) {
-      let errorMessage = 'Unable to access your location';
-      
-      switch (error.code) {
-        case error.PERMISSION_DENIED:
-          setLocationStatus('denied');
-          errorMessage = 'Location access was denied. Please enable location permissions in your browser settings.';
-          break;
-        case error.POSITION_UNAVAILABLE:
-          setLocationStatus('unavailable');
-          errorMessage = 'Location information is unavailable. Please check your device settings.';
-          break;
-        case error.TIMEOUT:
-          errorMessage = 'Location request timed out. Please try again.';
-          break;
-      }
+      } catch (error: unknown) {
+        let errorMessage = 'Unable to access your location';
+        
+        if (error instanceof GeolocationPositionError) {
+          switch (error.code) {
+            case error.PERMISSION_DENIED:
+              setLocationStatus('denied');
+              errorMessage = 'Location access was denied. Please enable location permissions in your browser settings.';
+              break;
+            case error.POSITION_UNAVAILABLE:
+              setLocationStatus('unavailable');
+              errorMessage = 'Location information is unavailable. Please check your device settings.';
+              break;
+            case error.TIMEOUT:
+              errorMessage = 'Location request timed out. Please try again.';
+              break;
+          }
+        }
       
       toast.error('Location Access Failed', {
         description: errorMessage,

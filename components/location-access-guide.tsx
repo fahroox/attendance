@@ -2,7 +2,7 @@
 
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
-import { MapPin, Shield, AlertTriangle, CheckCircle, ExternalLink } from 'lucide-react';
+import { MapPin, Shield, AlertTriangle, CheckCircle } from 'lucide-react';
 
 interface LocationAccessGuideProps {
   onRequestAccess?: () => void;
@@ -105,7 +105,7 @@ export function LocationAccessGuide({ onRequestAccess }: LocationAccessGuideProp
         <div className="bg-muted/50 p-4 rounded-lg">
           <h4 className="font-semibold text-sm mb-2">How Location Features Work:</h4>
           <ul className="text-xs space-y-1 text-muted-foreground">
-            <li>• We detect your current location using your browser's GPS</li>
+            <li>• We detect your current location using your browser&apos;s GPS</li>
             <li>• We find studios within 500 meters of your position</li>
             <li>• Your location is processed locally and never stored</li>
             <li>• You can revoke access anytime in your browser settings</li>
