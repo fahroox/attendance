@@ -44,9 +44,6 @@ export function LocationAwareDashboardSidebar({ user }: LocationAwareDashboardSi
     loadStudios();
   }, []);
 
-  const handleLogout = async () => {
-    await router.push('/auth/login');
-  };
 
   const displayStudioName = matchedStudio ? matchedStudio.studio_name : 'Design Studio';
   const showLocationIcon = matchedStudio && !isDetecting;
@@ -170,7 +167,7 @@ export function LocationAwareDashboardSidebar({ user }: LocationAwareDashboardSi
               >
                 Account
               </Button>
-              <LogoutButton onLogout={handleLogout} />
+              <LogoutButton />
             </div>
 
             {/* Admin-only section */}
