@@ -2,6 +2,7 @@
 
 import { usePathname } from 'next/navigation';
 import { LocationPermissionGate } from './location-permission-gate';
+import { StudioLocationGuard } from './studio-location-guard';
 
 interface ConditionalLocationGateProps {
   children: React.ReactNode;
@@ -29,10 +30,12 @@ export function ConditionalLocationGate({ children }: ConditionalLocationGatePro
     return <>{children}</>;
   }
   
-  // For all other pages, wrap with location permission gate
+  // For all other pages, wrap with location permission gate and studio location guard
   return (
     <LocationPermissionGate>
-      {children}
+      <StudioLocationGuard>
+        {children}
+      </StudioLocationGuard>
     </LocationPermissionGate>
   );
 }

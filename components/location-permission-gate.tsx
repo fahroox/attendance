@@ -123,8 +123,11 @@ export function LocationPermissionGate({ children }: LocationPermissionGateProps
     );
   }
 
-  // If permission is granted, show the app
+  // If permission is granted, check if user is within studio range
   if (permissionStatus === 'granted') {
+    // Check if user is within 500m of any studio
+    // This will be handled by the StudioLocationMatcher component
+    // For now, show the app and let StudioLocationMatcher handle the "out of studio" message
     return <>{children}</>;
   }
 

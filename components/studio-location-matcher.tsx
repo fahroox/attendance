@@ -104,14 +104,12 @@ export function StudioLocationMatcher({ onStudioMatched, className = "" }: Studi
     );
   }
 
-  // Show out of studio message
+  // Show default title when no studio is matched (out of studio message is handled by StudioLocationGuard)
   if (permissionStatus === 'granted' && !matchedStudio) {
     return (
       <div className={`flex items-center gap-2 ${className}`}>
-        <MapPinOff className="h-4 w-4 text-orange-600" />
-        <span className="text-lg font-semibold text-orange-700 dark:text-orange-400">
-          You&apos;re out of studio, go ahead to your studio
-        </span>
+        <MapPin className="h-4 w-4 text-blue-600" />
+        <span className="text-lg font-semibold">Design Studio Attendance</span>
       </div>
     );
   }
