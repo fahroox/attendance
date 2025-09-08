@@ -16,7 +16,7 @@ export function LocationAccessIndicator({
   onLocationDenied,
   className = ""
 }: LocationAccessIndicatorProps) {
-  const [locationStatus, setLocationStatus] = useState<'checking' | 'granted' | 'denied' | 'unavailable' | 'not-secure'>('checking');
+  const [locationStatus, setLocationStatus] = useState<'checking' | 'granted' | 'denied' | 'unavailable' | 'not-secure' | 'prompt'>('checking');
   const [isRequesting, setIsRequesting] = useState(false);
 
   useEffect(() => {
@@ -121,6 +121,8 @@ export function LocationAccessIndicator({
         return <AlertCircle className="h-4 w-4 text-orange-600" />;
       case 'not-secure':
         return <AlertCircle className="h-4 w-4 text-red-500" />;
+      case 'prompt':
+        return <MapPin className="h-4 w-4 text-yellow-600" />;
       case 'checking':
       default:
         return <MapPin className="h-4 w-4 text-blue-600" />;
@@ -137,6 +139,8 @@ export function LocationAccessIndicator({
         return 'Location Unavailable';
       case 'not-secure':
         return 'HTTPS Required';
+      case 'prompt':
+        return 'Location Permission Needed';
       case 'checking':
       default:
         return 'Checking Location Access';
@@ -155,6 +159,8 @@ export function LocationAccessIndicator({
         return 'Check Settings';
       case 'not-secure':
         return 'HTTPS Required';
+      case 'prompt':
+        return 'Request Permission';
       case 'checking':
       default:
         return 'Request Location';
