@@ -3,7 +3,7 @@
 import { useState, useEffect } from 'react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { MapPin, AlertTriangle, CheckCircle, Loader2 } from 'lucide-react';
+import { MapPin, AlertTriangle, Loader2 } from 'lucide-react';
 import { toast } from 'sonner';
 
 interface LocationPermissionGateProps {
@@ -224,8 +224,8 @@ export function LocationPermissionGate({ children }: LocationPermissionGateProps
               <div className="text-sm text-red-800 dark:text-red-200">
                 <p className="font-medium mb-2">How to enable location access:</p>
                 <ul className="space-y-1 text-xs">
-                  <li>• Click the location icon in your browser's address bar</li>
-                  <li>• Select "Allow" for location access</li>
+                  <li>• Click the location icon in your browser&apos;s address bar</li>
+                  <li>• Select &quot;Allow&quot; for location access</li>
                   <li>• Refresh the page after enabling</li>
                 </ul>
               </div>
