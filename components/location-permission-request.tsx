@@ -47,7 +47,7 @@ export function LocationPermissionRequest({
 
       // Request location permission
       navigator.geolocation.getCurrentPosition(
-        (position) => {
+        () => {
           setPermissionStatus('granted');
           toast.success('Location Access Granted', {
             description: 'We can now find nearby studios for you',
@@ -83,14 +83,14 @@ export function LocationPermissionRequest({
           maximumAge: 300000, // 5 minutes
         }
       );
-    } catch (error) {
-      setPermissionStatus('denied');
-      toast.error('Location Permission Error', {
-        description: 'An error occurred while requesting location access',
-        duration: 5000,
-      });
-      onPermissionDenied();
-    }
+        } catch {
+          setPermissionStatus('denied');
+          toast.error('Location Permission Error', {
+            description: 'An error occurred while requesting location access',
+            duration: 5000,
+          });
+          onPermissionDenied();
+        }
   };
 
   const getStatusIcon = () => {
@@ -128,7 +128,7 @@ export function LocationPermissionRequest({
       </CardHeader>
       <CardContent className="space-y-4">
         <div className="text-sm text-muted-foreground space-y-2">
-          <p>• We'll use your location to find studios within 500 meters</p>
+          <p>• We&apos;ll use your location to find studios within 500 meters</p>
           <p>• Your location is processed locally and not stored</p>
           <p>• You can manually select a studio if you prefer</p>
         </div>

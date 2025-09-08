@@ -21,9 +21,7 @@ export function LocationAwareHeader({ children }: LocationAwareHeaderProps) {
   const { 
     matchedStudio, 
     isDetecting, 
-    error, 
     permissionStatus,
-    retryDetection, 
     clearMatch, 
     requestPermission 
   } = useLocationMatch(studios);

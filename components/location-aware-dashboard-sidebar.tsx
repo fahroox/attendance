@@ -23,9 +23,7 @@ export function LocationAwareDashboardSidebar({ user }: LocationAwareDashboardSi
   const { 
     matchedStudio, 
     isDetecting, 
-    error, 
     permissionStatus,
-    retryDetection, 
     clearMatch, 
     requestPermission 
   } = useLocationMatch(studios);

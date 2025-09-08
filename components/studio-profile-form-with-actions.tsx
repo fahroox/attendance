@@ -60,7 +60,7 @@ export function StudioProfileFormWithActions({
       setHiddenLatitude(initialData.latitude.toString());
       setHiddenLongitude(initialData.longitude.toString());
     }
-  }, [initialData]);
+  }, [initialData, extractedCoordinates.latitude, extractedCoordinates.longitude]);
 
   // Handle action state changes
   useEffect(() => {

@@ -50,7 +50,7 @@ export function LocationFeatureInfo() {
         
         <div className="text-center pt-2">
           <p className="text-sm text-muted-foreground">
-            Click "Find Studio" in the header to get started, or manually select your studio from the admin panel.
+            Click &quot;Find Studio&quot; in the header to get started, or manually select your studio from the admin panel.
           </p>
           <p className="text-xs text-muted-foreground mt-2">
             💡 Location features work on deployed HTTPS URLs. Deploy to test the full functionality.
