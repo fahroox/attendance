@@ -55,7 +55,7 @@ export function StudioLocationGuard({ children }: StudioLocationGuardProps) {
     }
   }, [isClient, isLoadingStudios, studios.length, permissionStatus, matchedStudio, isDetecting, hasCheckedLocation, requestPermission]);
 
-  // Show loading state during hydration or user role check
+  // Show loading state during hydration or user role check (with timeout)
   if (!isClient || isUserLoading) {
     return (
       <div className="min-h-screen flex items-center justify-center bg-background">

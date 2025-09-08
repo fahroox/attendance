@@ -11,13 +11,23 @@ export function useUserRole() {
 
   useEffect(() => {
     const supabase = createClient();
+    let timeoutId: NodeJS.Timeout;
     
-    // Get initial user
+    // Get initial user with timeout
     const getUser = async () => {
       try {
+        // Set a timeout to prevent infinite loading
+        timeoutId = setTimeout(() => {
+          console.warn('User role check timed out, defaulting to non-admin');
+          setUser(null);
+          setIsAdmin(false);
+          setIsLoading(false);
+        }, 10000); // 10 second timeout
+
         const { data: { user: authUser }, error: authError } = await supabase.auth.getUser();
         
         if (authError || !authUser) {
+          clearTimeout(timeoutId);
           setUser(null);
           setIsAdmin(false);
           setIsLoading(false);
@@ -31,7 +41,10 @@ export function useUserRole() {
           .eq('id', authUser.id)
           .single();
 
+        clearTimeout(timeoutId);
+
         if (profileError || !profile) {
+          console.warn('Profile not found, defaulting to non-admin:', profileError);
           setUser(null);
           setIsAdmin(false);
           setIsLoading(false);
@@ -49,6 +62,7 @@ export function useUserRole() {
         setIsAdmin(profile.role === 'admin');
         setIsLoading(false);
       } catch (error) {
+        clearTimeout(timeoutId);
         console.error('Error fetching user role:', error);
         setUser(null);
         setIsAdmin(false);
@@ -70,6 +84,7 @@ export function useUserRole() {
     });
 
     return () => {
+      clearTimeout(timeoutId);
       subscription.unsubscribe();
     };
   }, []);

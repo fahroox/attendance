@@ -64,7 +64,7 @@ export function StudioLocationMatcher({ onStudioMatched, className = "" }: Studi
     onStudioMatched?.(matchedStudio);
   }, [matchedStudio, onStudioMatched]);
 
-  // Show loading state during hydration or user role check
+  // Show loading state during hydration or user role check (with timeout)
   if (!isClient || isUserLoading) {
     return (
       <div className={`flex items-center gap-2 ${className}`}>
