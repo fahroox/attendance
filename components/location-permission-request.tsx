@@ -17,7 +17,7 @@ export function LocationPermissionRequest({
   onPermissionDenied, 
   isDetecting 
 }: LocationPermissionRequestProps) {
-  const [permissionStatus, setPermissionStatus] = useState<'unknown' | 'granted' | 'denied'>('unknown');
+  const [permissionStatus, setPermissionStatus] = useState<'unknown' | 'granted' | 'denied' | 'prompt'>('unknown');
 
   const handleRequestPermission = async () => {
     if (!navigator.geolocation) {
@@ -99,6 +99,8 @@ export function LocationPermissionRequest({
         return <CheckCircle className="h-5 w-5 text-green-600" />;
       case 'denied':
         return <AlertCircle className="h-5 w-5 text-red-600" />;
+      case 'prompt':
+        return <MapPin className="h-5 w-5 text-yellow-600" />;
       default:
         return <MapPin className="h-5 w-5 text-blue-600" />;
     }
@@ -110,6 +112,8 @@ export function LocationPermissionRequest({
         return 'Location access granted';
       case 'denied':
         return 'Location access denied';
+      case 'prompt':
+        return 'Location permission prompt';
       default:
         return 'Location permission required';
     }
