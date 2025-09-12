@@ -3,7 +3,6 @@
 import { useState } from 'react';
 import Link from 'next/link';
 import { LocationPermissionRequest } from '@/components/location-permission-request';
-import { LocationAccessIndicator } from '@/components/location-access-indicator';
 import { LandingStudioMatcher } from '@/components/landing-studio-matcher';
 
 interface LocationAwareHeaderProps {
