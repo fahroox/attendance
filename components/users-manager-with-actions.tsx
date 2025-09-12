@@ -7,7 +7,7 @@ import { UserFormWithActions } from "./user-form-with-actions";
 import { Button } from "./ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "./ui/card";
 import { Plus, Users } from "lucide-react";
-import { createUser, updateUser, deleteUser, ActionState } from "@/app/users/actions";
+import { deleteUser } from "@/app/users/actions";
 import { toast } from "sonner";
 
 interface UsersManagerWithActionsProps {
