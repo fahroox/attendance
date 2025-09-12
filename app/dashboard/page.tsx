@@ -1,7 +1,6 @@
 import { createClient } from "@/lib/supabase/server";
 import { redirect } from "next/navigation";
 import { LocationAwareDashboardSidebar } from "@/components/location-aware-dashboard-sidebar";
-import { UserLocationDisplay } from "@/components/user-location-display";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import Link from "next/link";
@@ -58,28 +57,6 @@ export default async function Dashboard() {
           </div>
 
         <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
-          {/* Admin-specific card */}
-          {user.role === 'admin' && (
-            <Card>
-              <CardHeader>
-                <CardTitle>Admin Panel</CardTitle>
-                <CardDescription>
-                  Manage your design studio team
-                </CardDescription>
-              </CardHeader>
-              <CardContent>
-                <Button asChild className="w-full">
-                  <Link href="/admin">
-                    Go to Admin Panel
-                  </Link>
-                </Button>
-              </CardContent>
-            </Card>
-          )}
-
-          {/* User Location Display */}
-          <UserLocationDisplay />
-
           {/* Attendance card for all users */}
           <Card>
             <CardHeader>

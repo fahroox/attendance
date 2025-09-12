@@ -72,11 +72,10 @@ export function LocationAwareDashboardSidebar({ user }: LocationAwareDashboardSi
                   Studio Profile
                 </Link>
                 <Link
-                  href="/admin"
+                  href="/users"
                   className="flex items-center gap-3 px-3 py-2 rounded-md text-sm font-medium hover:bg-muted transition-colors"
-                  onClick={closeSidebar}
                 >
-                  Admin
+                  Users
                 </Link>
               </>
             )}
