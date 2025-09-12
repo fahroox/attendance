@@ -33,13 +33,6 @@ export function LocationAwareHeader({ children }: LocationAwareHeaderProps) {
               />
             </Link>
             
-            {/* Location detection controls */}
-            <div className="flex items-center gap-2 ml-4">
-              <LocationAccessIndicator
-                onLocationGranted={handlePermissionGranted}
-                onLocationDenied={handlePermissionDenied}
-              />
-            </div>
           </div>
           {children}
         </div>

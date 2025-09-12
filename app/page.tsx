@@ -20,7 +20,7 @@ export default function Home() {
         <LocationAwareHeader>
           {!hasEnvVars ? <EnvVarWarning /> : <AuthButton />}
         </LocationAwareHeader>
-        <div className="flex-1 flex flex-col gap-20 max-w-5xl p-5">
+        <div className="flex-1 flex flex-col gap-20 max-w-5xl p-5 justify-center">
           <div className="flex flex-col items-center gap-8 text-center">
             <h1 className="text-4xl font-bold tracking-tight">
               Design Studio Attendance System
@@ -43,51 +43,13 @@ export default function Home() {
           
           {hasEnvVars && (
             <div className="space-y-8">
-              {/* Location Access Guide */}
-              <LocationAccessGuide />
               
               {/* Location Access Indicator */}
               <div className="flex justify-center">
                 <LocationAccessIndicator />
               </div>
               
-              {/* Location Feature Info */}
-              <LocationFeatureInfo />
               
-              {/* Feature Cards */}
-              <div className="grid gap-6 md:grid-cols-2">
-                <Card>
-                  <CardHeader>
-                    <CardTitle>For Team Members</CardTitle>
-                    <CardDescription>
-                      Track your daily attendance and view your records
-                    </CardDescription>
-                  </CardHeader>
-                  <CardContent>
-                    <ul className="space-y-2 text-sm">
-                      <li>• Check in and check out</li>
-                      <li>• View attendance history</li>
-                      <li>• Track weekly/monthly stats</li>
-                    </ul>
-                  </CardContent>
-                </Card>
-                
-                <Card>
-                  <CardHeader>
-                    <CardTitle>For Administrators</CardTitle>
-                    <CardDescription>
-                      Manage your team and generate attendance reports
-                    </CardDescription>
-                  </CardHeader>
-                  <CardContent>
-                    <ul className="space-y-2 text-sm">
-                      <li>• Manage team members</li>
-                      <li>• View team attendance</li>
-                      <li>• Generate reports</li>
-                    </ul>
-                  </CardContent>
-                </Card>
-              </div>
             </div>
           )}
           
@@ -102,7 +64,7 @@ export default function Home() {
           )}
         </div>
 
-        <footer className="w-full flex items-center justify-center border-t mx-auto text-center text-xs gap-8 py-16">
+        <footer className="w-full flex items-center justify-center border-t mx-auto text-center text-xs gap-8 py-4">
           <p>
             Powered by{" "}
             <a

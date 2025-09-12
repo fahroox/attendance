@@ -97,6 +97,9 @@ export default async function Dashboard() {
                 <Button className="w-full mt-4">
                   Check In
                 </Button>
+                <div className="text-xs text-muted-foreground mt-2 text-center">
+                  Current time: {new Date().toLocaleTimeString()}
+                </div>
               </div>
             </CardContent>
           </Card>

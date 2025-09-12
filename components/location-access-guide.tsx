@@ -70,7 +70,7 @@ export function LocationAccessGuide() {
         <div className="flex justify-center mb-2">
           {statusInfo.icon}
         </div>
-        <CardTitle className="text-xl">Location Access Status</CardTitle>
+        <CardTitle className="text-xl text-green-600">Location Access Status</CardTitle>
         <CardDescription>
           {statusInfo.description}
         </CardDescription>

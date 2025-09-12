@@ -3,7 +3,7 @@
 import { useState } from 'react';
 import Link from 'next/link';
 import { LogoutButton } from '@/components/logout-button';
-import { X, Menu, User, Building2 } from 'lucide-react';
+import { X, Menu, Building2 } from 'lucide-react';
 
 interface LocationAwareDashboardSidebarProps {
   user: {
@@ -59,7 +59,6 @@ export function LocationAwareDashboardSidebar({ user }: LocationAwareDashboardSi
               className="flex items-center gap-3 px-3 py-2 rounded-md text-sm font-medium hover:bg-muted transition-colors"
               onClick={closeSidebar}
             >
-              <User className="h-4 w-4" />
               Dashboard
             </Link>
 
@@ -70,7 +69,6 @@ export function LocationAwareDashboardSidebar({ user }: LocationAwareDashboardSi
                   className="flex items-center gap-3 px-3 py-2 rounded-md text-sm font-medium hover:bg-muted transition-colors"
                   onClick={closeSidebar}
                 >
-                  <User className="h-4 w-4" />
                   Studio Profile
                 </Link>
                 <Link
@@ -78,7 +76,6 @@ export function LocationAwareDashboardSidebar({ user }: LocationAwareDashboardSi
                   className="flex items-center gap-3 px-3 py-2 rounded-md text-sm font-medium hover:bg-muted transition-colors"
                   onClick={closeSidebar}
                 >
-                  <User className="h-4 w-4" />
                   Admin
                 </Link>
               </>
@@ -89,7 +86,6 @@ export function LocationAwareDashboardSidebar({ user }: LocationAwareDashboardSi
               className="flex items-center gap-3 px-3 py-2 rounded-md text-sm font-medium hover:bg-muted transition-colors"
               onClick={closeSidebar}
             >
-              <User className="h-4 w-4" />
               Reports
             </Link>
 
@@ -98,7 +94,6 @@ export function LocationAwareDashboardSidebar({ user }: LocationAwareDashboardSi
               className="flex items-center gap-3 px-3 py-2 rounded-md text-sm font-medium hover:bg-muted transition-colors"
               onClick={closeSidebar}
             >
-              <User className="h-4 w-4" />
               Account
             </Link>
           </nav>
@@ -106,7 +101,6 @@ export function LocationAwareDashboardSidebar({ user }: LocationAwareDashboardSi
           {/* Footer */}
           <div className="p-4 border-t border-border">
             <div className="flex items-center gap-3 px-3 py-2 text-sm text-muted-foreground">
-              <User className="h-4 w-4" />
               {user.full_name || user.email}
             </div>
             <LogoutButton />
