@@ -10,8 +10,8 @@ Create a `.env.local` file in your project root with the following variables:
 NEXT_PUBLIC_SUPABASE_URL=your_supabase_project_url
 NEXT_PUBLIC_SUPABASE_PUBLISHABLE_OR_ANON_KEY=your_supabase_anon_key
 
-# Optional: For server-side operations (if needed)
-# SUPABASE_SERVICE_ROLE_KEY=your_supabase_service_role_key
+# Required: For admin operations (creating/deleting users)
+SUPABASE_SERVICE_ROLE_KEY=your_supabase_service_role_key
 
 # Site Configuration
 NEXT_PUBLIC_SITE_URL=http://localhost:3000

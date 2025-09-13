@@ -16,6 +16,8 @@ account
 
 Page & Function
 
+Page User
+
 Page Studio Profile
     - Form to manage studio information
         - Studio (input) - Required field
