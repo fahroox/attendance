@@ -80,7 +80,10 @@ export default async function Dashboard() {
                   Check In
                 </Button>
                 <div className="text-xs text-muted-foreground mt-2 text-center">
-                  Server time: {new Date().toLocaleString('en-US', { timeZone: 'Asia/Singapore' })} (Asia/Singapore)
+                  Convert time: {new Date().toLocaleString('en-US', { timeZone: 'Asia/Singapore' })} (Asia/Singapore)
+                </div>
+                <div className="text-xs text-muted-foreground mt-1 text-center">
+                  Server date: {new Date().toLocaleDateString('en-US', { timeZone: 'Asia/Singapore' })} - {new Date().toLocaleTimeString('en-US', { timeZone: 'Asia/Singapore' })} (Asia/Singapore)
                 </div>
               </div>
             </CardContent>
