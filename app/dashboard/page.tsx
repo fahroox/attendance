@@ -100,7 +100,7 @@ export default async function Dashboard() {
                   Check In
                 </Button>
                 <div className="text-xs text-muted-foreground mt-2 text-center">
-                  Current time: {new Date().toLocaleTimeString()}
+                  Server time: {new Date().toLocaleString()} ({Intl.DateTimeFormat().resolvedOptions().timeZone})
                 </div>
               </div>
             </CardContent>
