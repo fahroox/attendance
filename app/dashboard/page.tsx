@@ -80,7 +80,7 @@ export default async function Dashboard() {
                   Check In
                 </Button>
                 <div className="text-xs text-muted-foreground mt-2 text-center">
-                  Server time: {new Date().toLocaleString()} ({Intl.DateTimeFormat().resolvedOptions().timeZone})
+                  Server time: {new Date().toLocaleString('en-US', { timeZone: 'Asia/Jakarta' })} (Jakarta GMT+7)
                 </div>
                 <div className="text-xs text-muted-foreground mt-1 text-center">
                   Server region: {Intl.DateTimeFormat().resolvedOptions().timeZone} - {new Date().toLocaleDateString()} - {new Date().toLocaleTimeString()}
