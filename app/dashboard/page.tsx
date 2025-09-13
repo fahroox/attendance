@@ -45,7 +45,9 @@ export default async function Dashboard() {
   return (
     <div className="min-h-screen bg-background flex">
       {/* Sidebar */}
-      <LocationAwareDashboardSidebar user={user} />
+      <div className="lg:w-64">
+        <LocationAwareDashboardSidebar user={user} />
+      </div>
       
       {/* Main Content */}
       <div className="flex-1 lg:ml-0">

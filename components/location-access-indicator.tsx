@@ -4,6 +4,7 @@ import { useState, useEffect, useCallback } from 'react';
 import { Button } from '@/components/ui/button';
 import { MapPin, MapPinOff, AlertCircle, CheckCircle, Loader2 } from 'lucide-react';
 import { toast } from 'sonner';
+import { showErrorToast, showSuccessToast } from '@/lib/toast';
 
 interface LocationAccessIndicatorProps {
   onLocationGranted?: () => void;
@@ -52,10 +53,8 @@ export function LocationAccessIndicator({
 
   const requestLocationAccess = useCallback(async () => {
     if (!navigator.geolocation) {
-      toast.error('Location Not Supported', {
-        description: 'Your browser does not support location services',
-        duration: 5000,
-      });
+      toast.dismiss();
+      showErrorToast('Location Not Supported','Your browser does not support location services')
       return;
     }
 
@@ -71,13 +70,12 @@ export function LocationAccessIndicator({
       });
 
       setLocationStatus('granted');
-      toast.success('Location Access Granted', {
-        description: 'We can now find nearby studios for you',
-        duration: 3000,
-      });
+      toast.dismiss();
+      showSuccessToast('Location Access Granted','We can now find nearby studios for you')
       
       onLocationGranted?.();
       } catch (error: unknown) {
+        toast.dismiss();
         let errorMessage = 'Unable to access your location';
         
         if (error instanceof GeolocationPositionError) {
@@ -96,10 +94,7 @@ export function LocationAccessIndicator({
           }
         }
       
-      toast.error('Location Access Failed', {
-        description: errorMessage,
-        duration: 6000,
-      });
+        showErrorToast('Location Access Failed',errorMessage)
       
       onLocationDenied?.();
     } finally {

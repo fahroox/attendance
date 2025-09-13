@@ -8,6 +8,7 @@ import { toast } from 'sonner';
 import { calculateDistance } from '@/lib/coordinates';
 import { createClient } from '@/lib/supabase/client';
 import type { StudioProfile } from '@/lib/types';
+import { showErrorToast, showSuccessToast } from '@/lib/toast';
 
 interface UserLocationDisplayProps {
   className?: string;
@@ -96,12 +97,10 @@ export function UserLocationDisplay({ className = "" }: UserLocationDisplayProps
       
       setLocation(newLocation);
       await findNearestStudio(newLocation);
-
-      toast.success('Location updated successfully', {
-        description: 'Your current location has been retrieved',
-        duration: 3000,
-      });
+      toast.dismiss();
+      showSuccessToast('Location updated successfully','Your current location has been retrieved')
     } catch (error: unknown) {
+      toast.dismiss();
       let errorMessage = 'Unable to get your location';
       
       if (error instanceof GeolocationPositionError) {
@@ -119,10 +118,7 @@ export function UserLocationDisplay({ className = "" }: UserLocationDisplayProps
       }
       
       setError(errorMessage);
-      toast.error('Location Error', {
-        description: errorMessage,
-        duration: 5000,
-      });
+      showErrorToast('Location Error',errorMessage)
     } finally {
       setIsLoading(false);
     }
