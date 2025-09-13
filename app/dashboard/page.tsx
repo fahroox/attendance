@@ -60,25 +60,6 @@ export default async function Dashboard() {
           </div>
 
         <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
-            {/* Admin-specific card */}
-          {user.role === 'admin' && (
-            <Card>
-              <CardHeader>
-                <CardTitle>Admin Panel</CardTitle>
-                <CardDescription>
-                  Manage your design studio team
-                </CardDescription>
-              </CardHeader>
-              <CardContent>
-                <Button asChild className="w-full">
-                  <Link href="/admin">
-                    Go to Admin Panel
-                  </Link>
-                </Button>
-              </CardContent>
-            </Card>
-          )}
-
           {/* User Location Display */}
           <UserLocationDisplay />
 
@@ -100,7 +81,7 @@ export default async function Dashboard() {
                   Check In
                 </Button>
                 <div className="text-xs text-muted-foreground mt-2 text-center">
-                  Server time: {new Date().toLocaleString()} ({Intl.DateTimeFormat().resolvedOptions().timeZone})
+                  Server time: {new Date().toLocaleString('en-US', { timeZone: 'Asia/Singapore' })} (Asia/Singapore)
                 </div>
               </div>
             </CardContent>
