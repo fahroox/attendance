@@ -4,7 +4,6 @@ import { LocationAwareDashboardSidebar } from "@/components/location-aware-dashb
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { UserLocationDisplay } from "@/components/user-location-display";
-import Link from "next/link";
 
 export default async function Dashboard() {
   const supabase = await createClient();
